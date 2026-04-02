@@ -1,0 +1,95 @@
+import 'package:flutter/material.dart';
+
+/// Maps common icon name strings to [IconData].
+/// Falls back to [Icons.circle] for unknown names.
+IconData parseIconName(String name) {
+  switch (name.toLowerCase().trim()) {
+    case 'trending_up':
+    case 'trending-up':
+    case 'trend_up':
+      return Icons.trending_up;
+    case 'trending_down':
+    case 'trending-down':
+    case 'trend_down':
+      return Icons.trending_down;
+    case 'people':
+    case 'users':
+    case 'group':
+      return Icons.people;
+    case 'person':
+    case 'user':
+      return Icons.person;
+    case 'attach_money':
+    case 'money':
+    case 'dollar':
+      return Icons.attach_money;
+    case 'shopping_cart':
+    case 'cart':
+      return Icons.shopping_cart;
+    case 'bar_chart':
+    case 'chart':
+      return Icons.bar_chart;
+    case 'pie_chart':
+      return Icons.pie_chart;
+    case 'show_chart':
+    case 'line_chart':
+      return Icons.show_chart;
+    case 'star':
+      return Icons.star;
+    case 'favorite':
+    case 'heart':
+      return Icons.favorite;
+    case 'thumb_up':
+    case 'like':
+      return Icons.thumb_up;
+    case 'check_circle':
+    case 'check':
+      return Icons.check_circle;
+    case 'warning':
+      return Icons.warning;
+    case 'error':
+      return Icons.error;
+    case 'info':
+      return Icons.info;
+    case 'mail':
+    case 'email':
+      return Icons.mail;
+    case 'phone':
+      return Icons.phone;
+    case 'location_on':
+    case 'location':
+      return Icons.location_on;
+    case 'access_time':
+    case 'time':
+    case 'clock':
+      return Icons.access_time;
+    case 'calendar_today':
+    case 'calendar':
+      return Icons.calendar_today;
+    case 'notifications':
+    case 'bell':
+      return Icons.notifications;
+    case 'settings':
+      return Icons.settings;
+    case 'home':
+      return Icons.home;
+    case 'search':
+      return Icons.search;
+    case 'cloud':
+      return Icons.cloud;
+    case 'download':
+      return Icons.download;
+    case 'upload':
+      return Icons.upload;
+    case 'refresh':
+      return Icons.refresh;
+    case 'lock':
+      return Icons.lock;
+    case 'inventory':
+    case 'inventory_2':
+    case 'box':
+      return Icons.inventory_2;
+    default:
+      return Icons.circle;
+  }
+}
