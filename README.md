@@ -34,7 +34,7 @@ import 'package:genui_catalog/genui_catalog.dart';
 // 1. Register components
 final controller = SurfaceController(
   catalogs: [
-    CoreCatalogItems.asCatalog(),
+    BasicCatalogItems.asCatalog(),
     GenUICatalog.all,
   ],
 );
@@ -51,7 +51,7 @@ You can also register only the sub-catalogs you need:
 ```dart
 SurfaceController(
   catalogs: [
-    CoreCatalogItems.asCatalog(),
+    BasicCatalogItems.asCatalog(),
     DataCatalog.asCatalog(),      // KpiCard, DataTable, ChartCard, StatRow
     WorkflowCatalog.asCatalog(),  // TimelineCard, StatusBadge, StepperCard
     FormCatalog.asCatalog(),      // ActionForm, SearchBar, RatingInput
@@ -67,6 +67,7 @@ SurfaceController(
 ### 📊 Data
 
 #### KpiCard
+
 Displays a single metric with an optional trend indicator.
 
 ```json
@@ -79,11 +80,13 @@ Displays a single metric with an optional trend indicator.
   "color": "#4CAF50"
 }
 ```
+
 `trend` accepts `"up"` · `"down"` · `"neutral"`
 
 ---
 
 #### DataTable
+
 Renders tabular data with configurable columns. Recommended ≤ 50 rows, hard limit 100.
 
 ```json
@@ -94,17 +97,17 @@ Renders tabular data with configurable columns. Recommended ≤ 50 rows, hard li
     { "key": "role", "label": "Role" },
     { "key": "status", "label": "Status", "align": "center" }
   ],
-  "rows": [
-    { "name": "Alice", "role": "Designer", "status": "Active" }
-  ],
+  "rows": [{ "name": "Alice", "role": "Designer", "status": "Active" }],
   "striped": true
 }
 ```
+
 `align` accepts `"left"` · `"center"` · `"right"`
 
 ---
 
 #### ChartCard
+
 Renders a Line, Bar, or Pie chart. Supports up to 6 datasets.
 
 ```json
@@ -114,23 +117,43 @@ Renders a Line, Bar, or Pie chart. Supports up to 6 datasets.
   "xLabels": ["Jan", "Feb", "Mar", "Apr"],
   "showLegend": true,
   "datasets": [
-    { "label": "Revenue", "color": "#2196F3", "values": [42000, 55000, 48000, 63000] },
-    { "label": "Expenses", "color": "#E91E63", "values": [30000, 38000, 35000, 41000] }
+    {
+      "label": "Revenue",
+      "color": "#2196F3",
+      "values": [42000, 55000, 48000, 63000]
+    },
+    {
+      "label": "Expenses",
+      "color": "#E91E63",
+      "values": [30000, 38000, 35000, 41000]
+    }
   ]
 }
 ```
+
 `chartType` accepts `"line"` · `"bar"` · `"pie"`
 
 ---
 
 #### StatRow
+
 Displays 2–4 stats side by side.
 
 ```json
 {
   "stats": [
-    { "label": "Users",  "value": "8,291", "icon": "people",        "color": "#2196F3" },
-    { "label": "Orders", "value": "1,432", "icon": "shopping_cart",  "color": "#FF9800" }
+    {
+      "label": "Users",
+      "value": "8,291",
+      "icon": "people",
+      "color": "#2196F3"
+    },
+    {
+      "label": "Orders",
+      "value": "1,432",
+      "icon": "shopping_cart",
+      "color": "#FF9800"
+    }
   ]
 }
 ```
@@ -140,24 +163,47 @@ Displays 2–4 stats side by side.
 ### 🔄 Workflow
 
 #### TimelineCard
+
 Shows a vertical sequence of events with status indicators.
 
 ```json
 {
   "title": "Order #1042",
   "events": [
-    { "time": "09:00", "title": "Order placed",    "description": "Payment confirmed", "status": "done" },
-    { "time": "11:30", "title": "Shipped",          "description": "Tracking: XYZ123",  "status": "done" },
-    { "time": "14:00", "title": "Out for delivery", "description": "",                  "status": "active" },
-    { "time": "17:00", "title": "Delivered",        "description": "",                  "status": "pending" }
+    {
+      "time": "09:00",
+      "title": "Order placed",
+      "description": "Payment confirmed",
+      "status": "done"
+    },
+    {
+      "time": "11:30",
+      "title": "Shipped",
+      "description": "Tracking: XYZ123",
+      "status": "done"
+    },
+    {
+      "time": "14:00",
+      "title": "Out for delivery",
+      "description": "",
+      "status": "active"
+    },
+    {
+      "time": "17:00",
+      "title": "Delivered",
+      "description": "",
+      "status": "pending"
+    }
   ]
 }
 ```
+
 `status` accepts `"done"` · `"active"` · `"pending"`
 
 ---
 
 #### StatusBadge
+
 A colored chip conveying a status at a glance.
 
 ```json
@@ -167,11 +213,13 @@ A colored chip conveying a status at a glance.
   "description": "All systems running normally."
 }
 ```
+
 `status` accepts `"success"` · `"warning"` · `"error"` · `"info"` · `"neutral"`
 
 ---
 
 #### StepperCard
+
 Guides the user through a multi-step process. Dispatches `next_step` / `prev_step`.
 
 ```json
@@ -180,9 +228,17 @@ Guides the user through a multi-step process. Dispatches `next_step` / `prev_ste
   "currentStep": 1,
   "showNavigation": true,
   "steps": [
-    { "title": "Profile",   "description": "Fill in your details.",      "completed": true },
-    { "title": "Security",  "description": "Set up 2FA.",                "completed": false },
-    { "title": "Finish",    "description": "Review and confirm.",        "completed": false }
+    {
+      "title": "Profile",
+      "description": "Fill in your details.",
+      "completed": true
+    },
+    { "title": "Security", "description": "Set up 2FA.", "completed": false },
+    {
+      "title": "Finish",
+      "description": "Review and confirm.",
+      "completed": false
+    }
   ]
 }
 ```
@@ -192,6 +248,7 @@ Guides the user through a multi-step process. Dispatches `next_step` / `prev_ste
 ### 📝 Forms
 
 #### ActionForm
+
 Renders a dynamic form and dispatches `form_submit` with the filled values.
 
 ```json
@@ -200,12 +257,18 @@ Renders a dynamic form and dispatches `form_submit` with the filled values.
   "submitLabel": "Send message",
   "successMessage": "Thanks! We'll be in touch.",
   "fields": [
-    { "key": "name",    "label": "Full name", "type": "text",     "required": true },
-    { "key": "email",   "label": "Email",     "type": "email",    "required": true },
-    { "key": "message", "label": "Message",   "type": "textarea", "required": false }
+    { "key": "name", "label": "Full name", "type": "text", "required": true },
+    { "key": "email", "label": "Email", "type": "email", "required": true },
+    {
+      "key": "message",
+      "label": "Message",
+      "type": "textarea",
+      "required": false
+    }
   ]
 }
 ```
+
 `type` accepts `"text"` · `"email"` · `"number"` · `"textarea"`
 
 `form_submit` payload → `{ "values": { "name": "...", "email": "...", "message": "..." } }`
@@ -213,6 +276,7 @@ Renders a dynamic form and dispatches `form_submit` with the filled values.
 ---
 
 #### SearchBar
+
 A debounced search input that dispatches `search_query` once the user stops typing.
 
 ```json
@@ -228,6 +292,7 @@ A debounced search input that dispatches `search_query` once the user stops typi
 ---
 
 #### RatingInput
+
 A tappable star rating. Dispatches `rating_submitted` on selection.
 
 ```json
@@ -246,6 +311,7 @@ A tappable star rating. Dispatches `rating_submitted` on selection.
 ### 🖼️ Media
 
 #### ProfileCard
+
 Shows an avatar (or initials fallback), contact details, and action buttons.
 
 ```json
@@ -254,12 +320,12 @@ Shows an avatar (or initials fallback), contact details, and action buttons.
   "role": "Senior Engineer",
   "avatarUrl": "https://example.com/avatar.jpg",
   "details": [
-    { "label": "Email",    "value": "sarah@acme.com" },
+    { "label": "Email", "value": "sarah@acme.com" },
     { "label": "Location", "value": "San Francisco" }
   ],
   "actions": [
     { "label": "Message", "event": "profile_message" },
-    { "label": "Call",    "event": "profile_call" }
+    { "label": "Call", "event": "profile_call" }
   ]
 }
 ```
@@ -269,6 +335,7 @@ Each action button dispatches its `event` string.
 ---
 
 #### MediaCard
+
 A content card with an optional image, body text, tags, and action buttons.
 
 ```json
@@ -279,7 +346,7 @@ A content card with an optional image, body text, tags, and action buttons.
   "tags": ["flutter", "AI", "genui"],
   "actions": [
     { "label": "Read more", "event": "media_open" },
-    { "label": "Share",     "event": "media_share" }
+    { "label": "Share", "event": "media_share" }
   ]
 }
 ```
