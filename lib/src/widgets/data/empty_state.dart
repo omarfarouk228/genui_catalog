@@ -34,7 +34,9 @@ class EmptyStateWidget extends StatelessWidget {
     ];
 
     return Semantics(
-      label: semanticParts.isNotEmpty ? semanticParts.join('. ') : 'Empty state',
+      label: semanticParts.isNotEmpty
+          ? semanticParts.join('. ')
+          : 'Empty state',
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),

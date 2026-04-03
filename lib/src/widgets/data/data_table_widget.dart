@@ -30,62 +30,67 @@ class DataTableWidget extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
                 title!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           Semantics(
             label: title != null ? 'Table: $title' : 'Data table',
             child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowColor: WidgetStateProperty.all(
-                Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-              columns: columns.map((col) {
-                final align = col['align'] as String? ?? 'left';
-                return DataColumn(
-                  label: Expanded(
-                    child: Text(
-                      col['label'] as String? ?? col['key'] as String? ?? '',
-                      textAlign: _parseTextAlign(align),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                );
-              }).toList(),
-              rows: List.generate(rows.length, (index) {
-                final row = rows[index];
-                Color? rowColor;
-                if (striped && index.isOdd) {
-                  rowColor = Theme.of(context).colorScheme.surfaceContainerLow;
-                }
-                return DataRow(
-                  color: rowColor != null ? WidgetStateProperty.all(rowColor) : null,
-                  cells: columns.map((col) {
-                    final key = col['key'] as String? ?? '';
-                    final align = col['align'] as String? ?? 'left';
-                    final cellValue = row[key];
-                    return DataCell(
-                      Text(
-                        cellValue?.toString() ?? '',
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                headingRowColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+                columns: columns.map((col) {
+                  final align = col['align'] as String? ?? 'left';
+                  return DataColumn(
+                    label: Expanded(
+                      child: Text(
+                        col['label'] as String? ?? col['key'] as String? ?? '',
                         textAlign: _parseTextAlign(align),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    );
-                  }).toList(),
-                );
-              }),
+                    ),
+                  );
+                }).toList(),
+                rows: List.generate(rows.length, (index) {
+                  final row = rows[index];
+                  Color? rowColor;
+                  if (striped && index.isOdd) {
+                    rowColor = Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerLow;
+                  }
+                  return DataRow(
+                    color: rowColor != null
+                        ? WidgetStateProperty.all(rowColor)
+                        : null,
+                    cells: columns.map((col) {
+                      final key = col['key'] as String? ?? '';
+                      final align = col['align'] as String? ?? 'left';
+                      final cellValue = row[key];
+                      return DataCell(
+                        Text(
+                          cellValue?.toString() ?? '',
+                          textAlign: _parseTextAlign(align),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }),
+              ),
             ),
-          )),
+          ),
           if (isTruncated)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
               child: Text(
                 'Showing ${rows.length} of $totalRowCount rows',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
         ],

@@ -29,14 +29,17 @@ class ProfileCardWidget extends StatelessWidget {
         .join();
 
     final roleLabel = role != null && role!.isNotEmpty ? ', $role' : '';
-    final detailsLabel = details.map((d) {
-      final label = d['label'] as String? ?? '';
-      final value = d['value'] as String? ?? '';
-      return '$label: $value';
-    }).join('. ');
+    final detailsLabel = details
+        .map((d) {
+          final label = d['label'] as String? ?? '';
+          final value = d['value'] as String? ?? '';
+          return '$label: $value';
+        })
+        .join('. ');
 
     return Semantics(
-      label: '$name$roleLabel${detailsLabel.isNotEmpty ? '. $detailsLabel' : ''}',
+      label:
+          '$name$roleLabel${detailsLabel.isNotEmpty ? '. $detailsLabel' : ''}',
       child: Card(
         elevation: 2,
         child: Padding(
@@ -66,8 +69,8 @@ class ProfileCardWidget extends StatelessWidget {
                 child: Text(
                   name,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -77,8 +80,8 @@ class ProfileCardWidget extends StatelessWidget {
                   child: Text(
                     role!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -98,7 +101,9 @@ class ProfileCardWidget extends StatelessWidget {
                             label,
                             style: TextStyle(
                               fontSize: 13,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           Text(

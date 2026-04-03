@@ -64,10 +64,7 @@ class StatusBadgeWidget extends StatelessWidget {
               ),
               label: Text(
                 label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: bgColor,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600, color: bgColor),
               ),
               backgroundColor: bgColor.withValues(alpha: 0.12),
               side: BorderSide(color: bgColor.withValues(alpha: 0.4)),
@@ -81,8 +78,8 @@ class StatusBadgeWidget extends StatelessWidget {
                 child: Text(
                   description!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),

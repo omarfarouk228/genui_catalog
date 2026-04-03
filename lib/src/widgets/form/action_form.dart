@@ -67,9 +67,9 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
             if (widget.title != null && widget.title!.isNotEmpty) ...[
               Text(
                 widget.title!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
             ],
@@ -82,11 +82,17 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
                     decoration: BoxDecoration(
                       color: cs.primaryContainer,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: cs.primary.withValues(alpha: 0.4)),
+                      border: Border.all(
+                        color: cs.primary.withValues(alpha: 0.4),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.check_circle, color: cs.onPrimaryContainer, size: 20),
+                        Icon(
+                          Icons.check_circle,
+                          color: cs.onPrimaryContainer,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -110,7 +116,8 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
                       final type = field['type'] as String? ?? 'text';
                       final placeholder = field['placeholder'] as String? ?? '';
                       final required = field['required'] as bool? ?? false;
-                      final controller = _controllers[key] ?? TextEditingController();
+                      final controller =
+                          _controllers[key] ?? TextEditingController();
                       final isTextarea = type == 'textarea';
                       final isNumber = type == 'number';
                       final isEmail = type == 'email';
@@ -123,8 +130,8 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
                           keyboardType: isNumber
                               ? TextInputType.number
                               : isEmail
-                                  ? TextInputType.emailAddress
-                                  : TextInputType.text,
+                              ? TextInputType.emailAddress
+                              : TextInputType.text,
                           decoration: InputDecoration(
                             labelText: label,
                             hintText: placeholder,
@@ -136,8 +143,8 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
                           ),
                           validator: required
                               ? (v) => (v == null || v.isEmpty)
-                                  ? '$label is required'
-                                  : null
+                                    ? '$label is required'
+                                    : null
                               : null,
                         ),
                       );

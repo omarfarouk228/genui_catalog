@@ -9,7 +9,8 @@ class FormsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CatalogDemoScreen(
       catalogName: 'FormsCatalog',
-      subtitle: 'Dynamic forms, dropdowns, checkboxes, toggles, search, and ratings.',
+      subtitle:
+          'Dynamic forms, dropdowns, checkboxes, toggles, search, and ratings.',
       componentCount: 6,
       accentColor: const Color(0xFF4CAF50),
       icon: Icons.dynamic_form_rounded,

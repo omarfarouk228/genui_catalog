@@ -8,7 +8,11 @@ void main() {
     testWidgets('renders with placeholder', (tester) async {
       final ctx = createItemContext(
         buildContext: await getContext(tester),
-        data: {'placeholder': 'Find something...', 'debounceMs': 300, 'minChars': 2},
+        data: {
+          'placeholder': 'Find something...',
+          'debounceMs': 300,
+          'minChars': 2,
+        },
         type: 'SearchBar',
       );
       await tester.pumpWidget(wrap(searchBarItem.widgetBuilder(ctx)));

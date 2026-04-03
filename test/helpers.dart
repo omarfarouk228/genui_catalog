@@ -25,12 +25,10 @@ CatalogItemContext createItemContext({
 }
 
 Widget wrap(Widget child) => MaterialApp(
-      home: Scaffold(body: SingleChildScrollView(child: child)),
-    );
+  home: Scaffold(body: SingleChildScrollView(child: child)),
+);
 
 Future<BuildContext> getContext(WidgetTester tester) async {
-  await tester.pumpWidget(
-    const MaterialApp(home: Scaffold(body: SizedBox())),
-  );
+  await tester.pumpWidget(const MaterialApp(home: Scaffold(body: SizedBox())));
   return tester.element(find.byType(SizedBox));
 }

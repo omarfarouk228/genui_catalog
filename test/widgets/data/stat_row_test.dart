@@ -6,12 +6,16 @@ import '../../helpers.dart';
 void main() {
   group('StatRowWidget', () {
     testWidgets('renders all stats', (tester) async {
-      await tester.pumpWidget(wrap(
-        StatRowWidget(stats: [
-          {'label': 'Users', 'value': '100'},
-          {'label': 'Orders', 'value': '50'},
-        ]),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          StatRowWidget(
+            stats: [
+              {'label': 'Users', 'value': '100'},
+              {'label': 'Orders', 'value': '50'},
+            ],
+          ),
+        ),
+      );
       expect(find.text('Users'), findsOneWidget);
       expect(find.text('Orders'), findsOneWidget);
       expect(find.text('100'), findsOneWidget);

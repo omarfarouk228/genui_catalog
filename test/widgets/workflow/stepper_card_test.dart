@@ -13,17 +13,31 @@ void main() {
 
   group('StepperCardWidget', () {
     testWidgets('renders current step content', (tester) async {
-      await tester.pumpWidget(wrap(
-        StepperCardWidget(steps: steps, initialStep: 0, showNavigation: true, dispatchEvent: (_) {}),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 0,
+            showNavigation: true,
+            dispatchEvent: (_) {},
+          ),
+        ),
+      );
       expect(find.text('Step One'), findsOneWidget);
       expect(find.text('Do this first'), findsOneWidget);
     });
 
     testWidgets('navigates to next step', (tester) async {
-      await tester.pumpWidget(wrap(
-        StepperCardWidget(steps: steps, initialStep: 0, showNavigation: true, dispatchEvent: (_) {}),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 0,
+            showNavigation: true,
+            dispatchEvent: (_) {},
+          ),
+        ),
+      );
       await tester.tap(find.text('Next'));
       await tester.pump();
       expect(find.text('Step Two'), findsOneWidget);
@@ -31,28 +45,52 @@ void main() {
 
     testWidgets('dispatches next_step event', (tester) async {
       final events = <String>[];
-      await tester.pumpWidget(wrap(
-        StepperCardWidget(steps: steps, initialStep: 0, showNavigation: true, dispatchEvent: events.add),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 0,
+            showNavigation: true,
+            dispatchEvent: events.add,
+          ),
+        ),
+      );
       await tester.tap(find.text('Next'));
       await tester.pump();
       expect(events, contains('next_step'));
     });
 
     testWidgets('Previous button disabled on first step', (tester) async {
-      await tester.pumpWidget(wrap(
-        StepperCardWidget(steps: steps, initialStep: 0, showNavigation: true, dispatchEvent: (_) {}),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 0,
+            showNavigation: true,
+            dispatchEvent: (_) {},
+          ),
+        ),
+      );
       final prevButton = tester.widget<TextButton>(
-        find.ancestor(of: find.text('Previous'), matching: find.byType(TextButton)),
+        find.ancestor(
+          of: find.text('Previous'),
+          matching: find.byType(TextButton),
+        ),
       );
       expect(prevButton.onPressed, isNull);
     });
 
     testWidgets('renders without navigation buttons', (tester) async {
-      await tester.pumpWidget(wrap(
-        StepperCardWidget(steps: steps, initialStep: 1, showNavigation: false, dispatchEvent: (_) {}),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 1,
+            showNavigation: false,
+            dispatchEvent: (_) {},
+          ),
+        ),
+      );
       expect(find.text('Next'), findsNothing);
       expect(find.text('Step Two'), findsOneWidget);
     });

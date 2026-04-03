@@ -7,48 +7,54 @@ import '../../helpers.dart';
 void main() {
   group('SwitchGroupWidget', () {
     testWidgets('renders label and options', (tester) async {
-      await tester.pumpWidget(wrap(
-        SwitchGroupWidget(
-          label: 'Notifications',
-          options: const [
-            {'value': 'push', 'label': 'Push notifications'},
-            {'value': 'email', 'label': 'Email notifications'},
-          ],
-          dispatchEvent: (_) {},
+      await tester.pumpWidget(
+        wrap(
+          SwitchGroupWidget(
+            label: 'Notifications',
+            options: const [
+              {'value': 'push', 'label': 'Push notifications'},
+              {'value': 'email', 'label': 'Email notifications'},
+            ],
+            dispatchEvent: (_) {},
+          ),
         ),
-      ));
+      );
       expect(find.text('Notifications'), findsOneWidget);
       expect(find.text('Push notifications'), findsOneWidget);
       expect(find.text('Email notifications'), findsOneWidget);
     });
 
     testWidgets('renders subtitle', (tester) async {
-      await tester.pumpWidget(wrap(
-        SwitchGroupWidget(
-          options: const [
-            {
-              'value': 'push',
-              'label': 'Push',
-              'subtitle': 'Delivered to your device',
-            },
-          ],
-          dispatchEvent: (_) {},
+      await tester.pumpWidget(
+        wrap(
+          SwitchGroupWidget(
+            options: const [
+              {
+                'value': 'push',
+                'label': 'Push',
+                'subtitle': 'Delivered to your device',
+              },
+            ],
+            dispatchEvent: (_) {},
+          ),
         ),
-      ));
+      );
       expect(find.text('Delivered to your device'), findsOneWidget);
     });
 
     testWidgets('pre-enables initial values', (tester) async {
-      await tester.pumpWidget(wrap(
-        SwitchGroupWidget(
-          options: const [
-            {'value': 'push', 'label': 'Push'},
-            {'value': 'email', 'label': 'Email'},
-          ],
-          initialValues: const ['push'],
-          dispatchEvent: (_) {},
+      await tester.pumpWidget(
+        wrap(
+          SwitchGroupWidget(
+            options: const [
+              {'value': 'push', 'label': 'Push'},
+              {'value': 'email', 'label': 'Email'},
+            ],
+            initialValues: const ['push'],
+            dispatchEvent: (_) {},
+          ),
         ),
-      ));
+      );
 
       final switches = tester.widgetList<Switch>(find.byType(Switch)).toList();
       expect(switches[0].value, isTrue);
@@ -57,15 +63,17 @@ void main() {
 
     testWidgets('dispatches on event when toggled on', (tester) async {
       final dispatched = <String>[];
-      await tester.pumpWidget(wrap(
-        SwitchGroupWidget(
-          event: 'notify',
-          options: const [
-            {'value': 'push', 'label': 'Push'},
-          ],
-          dispatchEvent: dispatched.add,
+      await tester.pumpWidget(
+        wrap(
+          SwitchGroupWidget(
+            event: 'notify',
+            options: const [
+              {'value': 'push', 'label': 'Push'},
+            ],
+            dispatchEvent: dispatched.add,
+          ),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Switch));
       await tester.pump();
@@ -74,16 +82,18 @@ void main() {
 
     testWidgets('dispatches off event when toggled off', (tester) async {
       final dispatched = <String>[];
-      await tester.pumpWidget(wrap(
-        SwitchGroupWidget(
-          event: 'notify',
-          options: const [
-            {'value': 'push', 'label': 'Push'},
-          ],
-          initialValues: const ['push'],
-          dispatchEvent: dispatched.add,
+      await tester.pumpWidget(
+        wrap(
+          SwitchGroupWidget(
+            event: 'notify',
+            options: const [
+              {'value': 'push', 'label': 'Push'},
+            ],
+            initialValues: const ['push'],
+            dispatchEvent: dispatched.add,
+          ),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Switch));
       await tester.pump();

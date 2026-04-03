@@ -12,10 +12,7 @@ final checkboxGroupItem = CatalogItem(
       'initialValues': S.list(items: S.string()),
       'options': S.list(
         items: S.object(
-          properties: {
-            'value': S.string(),
-            'label': S.string(),
-          },
+          properties: {'value': S.string(), 'label': S.string()},
           required: ['value'],
         ),
       ),

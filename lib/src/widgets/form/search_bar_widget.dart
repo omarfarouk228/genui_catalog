@@ -55,15 +55,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         hintText: widget.placeholder ?? 'Search...',
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _controller.text.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: _clear,
-              )
+            ? IconButton(icon: const Icon(Icons.clear), onPressed: _clear)
             : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(28),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(28)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }

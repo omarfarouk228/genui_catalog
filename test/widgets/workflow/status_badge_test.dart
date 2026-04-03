@@ -6,29 +6,37 @@ import '../../helpers.dart';
 void main() {
   group('StatusBadgeWidget', () {
     testWidgets('renders label', (tester) async {
-      await tester.pumpWidget(wrap(
-        const StatusBadgeWidget(label: 'Active', status: 'success'),
-      ));
+      await tester.pumpWidget(
+        wrap(const StatusBadgeWidget(label: 'Active', status: 'success')),
+      );
       expect(find.text('Active'), findsOneWidget);
     });
 
     testWidgets('renders description when provided', (tester) async {
-      await tester.pumpWidget(wrap(
-        const StatusBadgeWidget(label: 'Error', status: 'error', description: 'Connection lost'),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          const StatusBadgeWidget(
+            label: 'Error',
+            status: 'error',
+            description: 'Connection lost',
+          ),
+        ),
+      );
       expect(find.text('Connection lost'), findsOneWidget);
     });
 
     testWidgets('omits description when null', (tester) async {
-      await tester.pumpWidget(wrap(
-        const StatusBadgeWidget(label: 'OK', status: 'success'),
-      ));
+      await tester.pumpWidget(
+        wrap(const StatusBadgeWidget(label: 'OK', status: 'success')),
+      );
       expect(find.byType(StatusBadgeWidget), findsOneWidget);
     });
 
     for (final status in ['success', 'warning', 'error', 'info', 'unknown']) {
       testWidgets('renders without error for status=$status', (tester) async {
-        await tester.pumpWidget(wrap(StatusBadgeWidget(label: status, status: status)));
+        await tester.pumpWidget(
+          wrap(StatusBadgeWidget(label: status, status: status)),
+        );
         expect(find.byType(StatusBadgeWidget), findsOneWidget);
       });
     }
@@ -38,7 +46,11 @@ void main() {
     testWidgets('builds widget with label and description', (tester) async {
       final ctx = createItemContext(
         buildContext: await getContext(tester),
-        data: {'label': 'Ready', 'status': 'success', 'description': 'All systems go'},
+        data: {
+          'label': 'Ready',
+          'status': 'success',
+          'description': 'All systems go',
+        },
         type: 'StatusBadge',
       );
       await tester.pumpWidget(wrap(statusBadgeItem.widgetBuilder(ctx)));

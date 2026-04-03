@@ -4,11 +4,7 @@ class TimelineCardWidget extends StatelessWidget {
   final String? title;
   final List<Map<String, dynamic>> events;
 
-  const TimelineCardWidget({
-    super.key,
-    this.title,
-    required this.events,
-  });
+  const TimelineCardWidget({super.key, this.title, required this.events});
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +18,16 @@ class TimelineCardWidget extends StatelessWidget {
             if (title != null && title!.isNotEmpty) ...[
               Text(
                 title!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
             ],
             ...List.generate(events.length, (index) {
               final event = events[index];
               final isLast = index == events.length - 1;
-              return _TimelineEvent(
-                event: event,
-                isLast: isLast,
-              );
+              return _TimelineEvent(event: event, isLast: isLast);
             }),
           ],
         ),
@@ -80,65 +73,63 @@ class _TimelineEvent extends StatelessWidget {
     return Semantics(
       label: semanticLabel,
       child: IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 24,
-            child: Column(
-              children: [
-                ExcludeSemantics(child: _buildDot(status, color, cs)),
-                if (!isLast)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      color: cs.outlineVariant,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 24,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (time.isNotEmpty)
-                    Text(
-                      time,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: cs.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ExcludeSemantics(child: _buildDot(status, color, cs)),
+                  if (!isLast)
+                    Expanded(
+                      child: Container(width: 2, color: cs.outlineVariant),
                     ),
-                  const SizedBox(height: 2),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  if (description.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (time.isNotEmpty)
+                      Text(
+                        time,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: cs.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    const SizedBox(height: 2),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (description.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget _buildDot(String status, Color color, ColorScheme cs) {
@@ -148,10 +139,7 @@ class _TimelineEvent extends StatelessWidget {
           width: 16,
           height: 16,
           margin: const EdgeInsets.only(top: 2),
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           child: Icon(Icons.check, size: 10, color: cs.onPrimary),
         );
       case 'active':

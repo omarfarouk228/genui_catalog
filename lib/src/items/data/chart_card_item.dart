@@ -45,7 +45,9 @@ final chartCardItem = CatalogItem(
       datasets: datasets,
       xLabels: xLabels,
       showLegend: showLegend,
-      totalDatasetCount: allDatasets.length > datasetLimit ? allDatasets.length : null,
+      totalDatasetCount: allDatasets.length > datasetLimit
+          ? allDatasets.length
+          : null,
     );
   },
 );

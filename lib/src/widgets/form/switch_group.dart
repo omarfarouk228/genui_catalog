@@ -56,9 +56,7 @@ class _SwitchGroupWidgetState extends State<SwitchGroupWidget> {
             padding: const EdgeInsets.only(bottom: 4),
             child: Text(
               widget.label!,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: cs.onSurface,
-              ),
+              style: theme.textTheme.labelLarge?.copyWith(color: cs.onSurface),
             ),
           ),
         ...widget.options.map((opt) {

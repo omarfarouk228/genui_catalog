@@ -5,7 +5,12 @@ import '../../helpers.dart';
 
 void main() {
   final events = [
-    {'time': '09:00', 'title': 'Started', 'description': 'Kicked off', 'status': 'done'},
+    {
+      'time': '09:00',
+      'title': 'Started',
+      'description': 'Kicked off',
+      'status': 'done',
+    },
     {'time': '10:30', 'title': 'In Progress', 'status': 'active'},
     {'time': '12:00', 'title': 'Pending review', 'status': 'pending'},
   ];
@@ -24,9 +29,9 @@ void main() {
     });
 
     testWidgets('renders optional title', (tester) async {
-      await tester.pumpWidget(wrap(
-        TimelineCardWidget(title: 'Project Timeline', events: events),
-      ));
+      await tester.pumpWidget(
+        wrap(TimelineCardWidget(title: 'Project Timeline', events: events)),
+      );
       expect(find.text('Project Timeline'), findsOneWidget);
     });
 

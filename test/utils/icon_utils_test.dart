@@ -30,7 +30,10 @@ void main() {
     });
 
     test('returns fallback for unknown icon', () {
-      expect(parseIconName('totally_unknown_icon_xyz'), equals(Icons.label_outline));
+      expect(
+        parseIconName('totally_unknown_icon_xyz'),
+        equals(Icons.label_outline),
+      );
     });
 
     test('returns fallback for empty string', () {

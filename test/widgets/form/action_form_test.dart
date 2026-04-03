@@ -8,39 +8,63 @@ import '../../helpers.dart';
 void main() {
   group('ActionFormWidget', () {
     testWidgets('renders form fields and submit button', (tester) async {
-      await tester.pumpWidget(wrap(
-        ActionFormWidget(
-          fields: [{'key': 'name', 'label': 'Full Name', 'type': 'text', 'required': false}],
-          submitLabel: 'Submit',
-          dispatchEvent: (_) {},
+      await tester.pumpWidget(
+        wrap(
+          ActionFormWidget(
+            fields: [
+              {
+                'key': 'name',
+                'label': 'Full Name',
+                'type': 'text',
+                'required': false,
+              },
+            ],
+            submitLabel: 'Submit',
+            dispatchEvent: (_) {},
+          ),
         ),
-      ));
+      );
       expect(find.byType(TextFormField), findsOneWidget);
       expect(find.text('Submit'), findsOneWidget);
     });
 
-    testWidgets('shows validation error when required field is empty', (tester) async {
-      await tester.pumpWidget(wrap(
-        ActionFormWidget(
-          fields: [{'key': 'email', 'label': 'Email', 'type': 'email', 'required': true}],
-          submitLabel: 'Go',
-          dispatchEvent: (_) {},
+    testWidgets('shows validation error when required field is empty', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrap(
+          ActionFormWidget(
+            fields: [
+              {
+                'key': 'email',
+                'label': 'Email',
+                'type': 'email',
+                'required': true,
+              },
+            ],
+            submitLabel: 'Go',
+            dispatchEvent: (_) {},
+          ),
         ),
-      ));
+      );
       await tester.tap(find.text('Go'));
       await tester.pumpAndSettle();
       expect(find.textContaining('required'), findsOneWidget);
     });
 
     testWidgets('shows success message after submit', (tester) async {
-      await tester.pumpWidget(wrap(
-        ActionFormWidget(
-          fields: [{'key': 'name', 'label': 'Name', 'required': false}],
-          submitLabel: 'OK',
-          successMessage: 'Saved!',
-          dispatchEvent: (_) {},
+      await tester.pumpWidget(
+        wrap(
+          ActionFormWidget(
+            fields: [
+              {'key': 'name', 'label': 'Name', 'required': false},
+            ],
+            submitLabel: 'OK',
+            successMessage: 'Saved!',
+            dispatchEvent: (_) {},
+          ),
         ),
-      ));
+      );
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
       expect(find.text('Saved!'), findsOneWidget);
@@ -53,7 +77,9 @@ void main() {
       final ctx = createItemContext(
         buildContext: await getContext(tester),
         data: {
-          'fields': [{'key': 'name', 'label': 'Name', 'type': 'text', 'required': true}],
+          'fields': [
+            {'key': 'name', 'label': 'Name', 'type': 'text', 'required': true},
+          ],
           'submitLabel': 'Send',
         },
         onDispatch: events.add,

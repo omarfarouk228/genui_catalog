@@ -31,26 +31,24 @@ class ChartCardWidget extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              height: 220,
-              child: _buildChart(context),
-            ),
+            SizedBox(height: 220, child: _buildChart(context)),
             if (showLegend && datasets.isNotEmpty) ...[
               const SizedBox(height: 12),
               _buildLegend(context),
             ],
-            if (totalDatasetCount != null && totalDatasetCount! > datasets.length) ...[
+            if (totalDatasetCount != null &&
+                totalDatasetCount! > datasets.length) ...[
               const SizedBox(height: 8),
               Text(
                 'Showing ${datasets.length} of $totalDatasetCount datasets',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ],
@@ -68,9 +66,7 @@ class ChartCardWidget extends StatelessWidget {
       case 'pie':
         return _buildPieChart(context);
       default:
-        return Center(
-          child: Text('Unknown chart type: $chartType'),
-        );
+        return Center(child: Text('Unknown chart type: $chartType'));
     }
   }
 
@@ -94,7 +90,10 @@ class ChartCardWidget extends StatelessWidget {
   Color _getDatasetColor(Map<String, dynamic> dataset, int index) {
     final colorStr = dataset['color'] as String?;
     if (colorStr != null && colorStr.isNotEmpty) {
-      return parseHexColor(colorStr, fallback: _defaultColors[index % _defaultColors.length]);
+      return parseHexColor(
+        colorStr,
+        fallback: _defaultColors[index % _defaultColors.length],
+      );
     }
     return _defaultColors[index % _defaultColors.length];
   }
@@ -153,15 +152,21 @@ class ChartCardWidget extends StatelessWidget {
               },
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.5),
             strokeWidth: 1,
           ),
         ),
@@ -222,14 +227,20 @@ class ChartCardWidget extends StatelessWidget {
               },
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.5),
             strokeWidth: 1,
           ),
         ),
@@ -296,10 +307,7 @@ class ChartCardWidget extends StatelessWidget {
             Container(
               width: 12,
               height: 12,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 4),
             Text(label, style: const TextStyle(fontSize: 12)),
