@@ -1,22 +1,23 @@
 name: genui_catalog_example
-description: Interactive demo for the genui_catalog Flutter package.
-publish_to: 'none'
-version: 1.0.0+1
+description: "Interactive demo for the genui_catalog Flutter package."
+publish_to: "none"
+version: 0.1.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ^3.11.4
 
 dependencies:
   flutter:
     sdk: flutter
+  genui: ^0.8.0
   genui_catalog:
     path: ../
+  google_generative_ai: ^0.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

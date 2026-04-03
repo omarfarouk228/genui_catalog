@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import '../main.dart' show AppShellState;
+import '../services/api_key_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            _HeroSection(),
-            SizedBox(height: 16),
+            _HeroSection(onRefresh: () => setState(() {})),
+            const SizedBox(height: 16),
             _ComponentGridSection(),
-            SizedBox(height: 48),
+            const SizedBox(height: 48),
           ],
         ),
       ),
@@ -26,8 +32,34 @@ class HomeScreen extends StatelessWidget {
 // Hero section
 // ---------------------------------------------------------------------------
 
-class _HeroSection extends StatelessWidget {
-  const _HeroSection();
+class _HeroSection extends StatefulWidget {
+  final VoidCallback onRefresh;
+  const _HeroSection({required this.onRefresh});
+
+  @override
+  State<_HeroSection> createState() => _HeroSectionState();
+}
+
+class _HeroSectionState extends State<_HeroSection> {
+  final _keyController = TextEditingController();
+  bool _editing = false;
+  bool _obscure = true;
+
+  @override
+  void dispose() {
+    _keyController.dispose();
+    super.dispose();
+  }
+
+  void _saveKey() {
+    final key = _keyController.text.trim();
+    if (key.isNotEmpty) {
+      ApiKeyProvider.set(key);
+      setState(() => _editing = false);
+      _keyController.clear();
+      widget.onRefresh();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +98,7 @@ class _HeroSection extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      size: 14,
-                      color: colorScheme.primary,
-                    ),
+                    Icon(Icons.auto_awesome, size: 14, color: colorScheme.primary),
                     const SizedBox(width: 6),
                     Text(
                       'Flutter · v0.1.0 · MIT License',
@@ -163,10 +191,125 @@ class _HeroSection extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 32),
+              // API Key banner
+              _ApiKeyBanner(
+                editing: _editing,
+                keyController: _keyController,
+                obscure: _obscure,
+                onToggleEdit: () => setState(() {
+                  _editing = !_editing;
+                  if (_editing) _keyController.clear();
+                }),
+                onToggleObscure: () => setState(() => _obscure = !_obscure),
+                onSave: _saveKey,
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ApiKeyBanner extends StatelessWidget {
+  final bool editing;
+  final TextEditingController keyController;
+  final bool obscure;
+  final VoidCallback onToggleEdit;
+  final VoidCallback onToggleObscure;
+  final VoidCallback onSave;
+
+  const _ApiKeyBanner({
+    required this.editing,
+    required this.keyController,
+    required this.obscure,
+    required this.onToggleEdit,
+    required this.onToggleObscure,
+    required this.onSave,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasKey = ApiKeyProvider.hasKey;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: hasKey
+            ? Colors.green.withValues(alpha: 0.08)
+            : colorScheme.errorContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: hasKey
+              ? Colors.green.withValues(alpha: 0.3)
+              : colorScheme.error.withValues(alpha: 0.3),
+        ),
+      ),
+      child: editing
+          ? Row(
+              children: [
+                const Icon(Icons.vpn_key, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: keyController,
+                    obscureText: obscure,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Paste your Gemini API key…',
+                      isDense: true,
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscure ? Icons.visibility : Icons.visibility_off,
+                          size: 18,
+                        ),
+                        onPressed: onToggleObscure,
+                      ),
+                    ),
+                    onSubmitted: (_) => onSave(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                FilledButton(onPressed: onSave, child: const Text('Save')),
+                const SizedBox(width: 4),
+                TextButton(
+                  onPressed: onToggleEdit,
+                  child: const Text('Cancel'),
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Icon(
+                  hasKey ? Icons.check_circle : Icons.warning_amber_rounded,
+                  size: 18,
+                  color: hasKey ? Colors.green : colorScheme.error,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    hasKey
+                        ? 'Gemini API key configured — all demo screens are active.'
+                        : 'Add your Gemini API key to enable the interactive demos.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: hasKey
+                          ? Colors.green.shade700
+                          : colorScheme.onErrorContainer,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: onToggleEdit,
+                  child: Text(hasKey ? 'Change' : 'Add key'),
+                ),
+              ],
+            ),
     );
   }
 }
@@ -227,7 +370,8 @@ class _ComponentGridSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _SectionTitle(title: 'All Components', count: _allComponents.length),
+              _SectionTitle(
+                  title: 'All Components', count: _allComponents.length),
               const SizedBox(height: 20),
               Wrap(
                 spacing: 12,
@@ -284,7 +428,7 @@ class _SectionTitle extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Component definition model (plain data, not a Widget)
+// Component definition model
 // ---------------------------------------------------------------------------
 
 class _ComponentInfo {
@@ -314,84 +458,84 @@ const List<_ComponentInfo> _allComponents = [
     description: 'Single metric with trend badge',
     icon: Icons.trending_up,
     color: _dataColor,
-    navIndex: 1,
+    navIndex: 2,
   ),
   _ComponentInfo(
     name: 'DataTable',
     description: 'Tabular data, up to 100 rows',
     icon: Icons.table_chart_outlined,
     color: _dataColor,
-    navIndex: 1,
+    navIndex: 2,
   ),
   _ComponentInfo(
     name: 'ChartCard',
     description: 'Line, Bar, or Pie chart',
     icon: Icons.insert_chart_outlined,
     color: _dataColor,
-    navIndex: 1,
+    navIndex: 2,
   ),
   _ComponentInfo(
     name: 'StatRow',
     description: '2–4 side-by-side stats',
     icon: Icons.space_bar,
     color: _dataColor,
-    navIndex: 1,
+    navIndex: 2,
   ),
   _ComponentInfo(
     name: 'TimelineCard',
     description: 'Vertical event timeline',
     icon: Icons.timeline,
     color: _workflowColor,
-    navIndex: 2,
+    navIndex: 3,
   ),
   _ComponentInfo(
     name: 'StatusBadge',
     description: 'Colored status indicator',
     icon: Icons.label_outline,
     color: _workflowColor,
-    navIndex: 2,
+    navIndex: 3,
   ),
   _ComponentInfo(
     name: 'StepperCard',
     description: 'Multi-step process navigator',
     icon: Icons.stairs_outlined,
     color: _workflowColor,
-    navIndex: 2,
+    navIndex: 3,
   ),
   _ComponentInfo(
     name: 'ActionForm',
     description: 'Dynamic form with submit',
     icon: Icons.edit_note_outlined,
     color: _formColor,
-    navIndex: 3,
+    navIndex: 4,
   ),
   _ComponentInfo(
     name: 'SearchBar',
     description: 'Debounced search input',
     icon: Icons.search,
     color: _formColor,
-    navIndex: 3,
+    navIndex: 4,
   ),
   _ComponentInfo(
     name: 'RatingInput',
     description: 'Star rating widget',
     icon: Icons.star_half,
     color: _formColor,
-    navIndex: 3,
+    navIndex: 4,
   ),
   _ComponentInfo(
     name: 'ProfileCard',
     description: 'Avatar, details, and actions',
     icon: Icons.person_outline,
     color: _mediaColor,
-    navIndex: 4,
+    navIndex: 5,
   ),
   _ComponentInfo(
     name: 'MediaCard',
     description: 'Image, content, and tags',
     icon: Icons.image_outlined,
     color: _mediaColor,
-    navIndex: 4,
+    navIndex: 5,
   ),
 ];
 

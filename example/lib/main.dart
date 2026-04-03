@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'screens/ai_demo_screen.dart';
 import 'screens/data_screen.dart';
 import 'screens/workflow_screen.dart';
 import 'screens/forms_screen.dart';
@@ -53,6 +54,11 @@ const List<_NavItem> _navItems = [
     activeIcon: Icons.home,
   ),
   _NavItem(
+    label: 'AI Demo',
+    icon: Icons.auto_awesome_outlined,
+    activeIcon: Icons.auto_awesome,
+  ),
+  _NavItem(
     label: 'Data',
     icon: Icons.bar_chart_outlined,
     activeIcon: Icons.bar_chart,
@@ -94,6 +100,7 @@ class AppShellState extends State<AppShell> {
 
   static const _screens = [
     HomeScreen(),
+    AiDemoScreen(),
     DataScreen(),
     WorkflowScreen(),
     FormsScreen(),
