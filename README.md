@@ -28,7 +28,7 @@ dependencies:
 
 [<img src="doc/assets/genui.png" alt="GenUI Catalog" height="500">](https://www.youtube.com/watch?v=hDpVakPp4vc)
 
----
+### <a href="https://genui-catalog.ofaroukk.com" target="_blank"> Test the demo app</a>
 
 ## Getting started
 
