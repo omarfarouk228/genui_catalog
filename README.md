@@ -19,7 +19,7 @@ A catalog of **17 high-level UI components** built on top of the [`genui`](https
 ```yaml
 dependencies:
   genui: ^0.8.0
-  genui_catalog: ^0.2.1
+  genui_catalog: ^0.2.2
 ```
 
 ---
