@@ -1,6 +1,6 @@
 name: genui_catalog
 description: "Ready-to-use GenUI CatalogItems for building dynamic AI-generated UIs."
-version: 0.0.1
+version: 0.2.0
 homepage:
 
 environment:

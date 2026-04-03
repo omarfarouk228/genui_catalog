@@ -8,6 +8,7 @@ class ChartCardWidget extends StatelessWidget {
   final List<Map<String, dynamic>> datasets;
   final List<String>? xLabels;
   final bool showLegend;
+  final int? totalDatasetCount;
 
   const ChartCardWidget({
     super.key,
@@ -16,6 +17,7 @@ class ChartCardWidget extends StatelessWidget {
     required this.datasets,
     this.xLabels,
     this.showLegend = false,
+    this.totalDatasetCount,
   });
 
   @override
@@ -41,6 +43,15 @@ class ChartCardWidget extends StatelessWidget {
             if (showLegend && datasets.isNotEmpty) ...[
               const SizedBox(height: 12),
               _buildLegend(context),
+            ],
+            if (totalDatasetCount != null && totalDatasetCount! > datasets.length) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Showing ${datasets.length} of $totalDatasetCount datasets',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
             ],
           ],
         ),
@@ -71,20 +82,21 @@ class ChartCardWidget extends StatelessWidget {
     return [];
   }
 
+  static const _defaultColors = [
+    Color(0xFF2196F3),
+    Color(0xFFE91E63),
+    Color(0xFF4CAF50),
+    Color(0xFFFF9800),
+    Color(0xFF9C27B0),
+    Color(0xFF00BCD4),
+  ];
+
   Color _getDatasetColor(Map<String, dynamic> dataset, int index) {
     final colorStr = dataset['color'] as String?;
     if (colorStr != null && colorStr.isNotEmpty) {
-      return parseHexColor(colorStr);
+      return parseHexColor(colorStr, fallback: _defaultColors[index % _defaultColors.length]);
     }
-    const defaultColors = [
-      Color(0xFF2196F3),
-      Color(0xFFE91E63),
-      Color(0xFF4CAF50),
-      Color(0xFFFF9800),
-      Color(0xFF9C27B0),
-      Color(0xFF00BCD4),
-    ];
-    return defaultColors[index % defaultColors.length];
+    return _defaultColors[index % _defaultColors.length];
   }
 
   Widget _buildLineChart(BuildContext context) {
@@ -149,7 +161,7 @@ class ChartCardWidget extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
             strokeWidth: 1,
           ),
         ),
@@ -217,7 +229,7 @@ class ChartCardWidget extends StatelessWidget {
           show: true,
           drawVerticalLine: false,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
             strokeWidth: 1,
           ),
         ),

@@ -24,7 +24,7 @@ final statRowItem = CatalogItem(
   widgetBuilder: (itemContext) {
     final data = itemContext.data as Map<String, dynamic>;
     final rawStats = data['stats'] as List<dynamic>? ?? [];
-    final stats = rawStats.whereType<Map<String, dynamic>>().take(4).toList();
+    final stats = rawStats.whereType<Map<String, dynamic>>().toList();
 
     return StatRowWidget(key: ValueKey(itemContext.id), stats: stats);
   },

@@ -18,6 +18,22 @@ class WorkflowCatalog {
     stepperCardItem,
   ];
 
+  /// Names of all available workflow components.
+  static List<String> get itemNames => items.map((i) => i.name).toList();
+
+  /// Catalog ID for workflow components in the GenUI Catalog.
+  static const String catalogId = 'genui_catalog/workflow';
+
   /// Returns a [Catalog] containing all workflow catalog items.
-  static Catalog asCatalog() => Catalog(items);
+  static Catalog asCatalog() => Catalog(
+    items,
+    catalogId: catalogId,
+    systemPromptFragments: [
+      'Workflow components available: ${itemNames.join(', ')}. '
+          'TimelineCard: ordered list of events with time/title/description/status (done|active|pending). '
+          'StatusBadge: colored chip for success|warning|error|info|unknown status. '
+          'StepperCard: multi-step wizard with optional navigation buttons; '
+          'dispatches next_step and prev_step events.',
+    ],
+  );
 }

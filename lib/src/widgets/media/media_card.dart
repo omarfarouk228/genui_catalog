@@ -20,7 +20,15 @@ class MediaCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final semanticLabel = [
+      title,
+      if (content != null && content!.isNotEmpty) content!,
+      if (tags.isNotEmpty) 'Tags: ${tags.join(', ')}',
+    ].join('. ');
+
+    return Semantics(
+      label: semanticLabel,
+      child: Card(
       elevation: 2,
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -34,7 +42,7 @@ class MediaCardWidget extends StatelessWidget {
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
                 height: 180,
-                color: Colors.grey[200],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: const Center(child: Icon(Icons.broken_image, size: 40)),
               ),
             ),
@@ -54,7 +62,7 @@ class MediaCardWidget extends StatelessWidget {
                   Text(
                     content!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ],
@@ -96,6 +104,6 @@ class MediaCardWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }

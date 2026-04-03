@@ -10,8 +10,8 @@ class DataScreen extends StatelessWidget {
     return CatalogDemoScreen(
       catalogName: 'DataCatalog',
       subtitle:
-          'KPI metrics, charts, tables, and stat rows — for data-rich dashboards.',
-      componentCount: 4,
+          'KPI metrics, charts, tables, stat rows, lists, and empty states — for data-rich dashboards.',
+      componentCount: 6,
       accentColor: const Color(0xFF2196F3),
       icon: Icons.bar_chart_rounded,
       presets: const [
@@ -52,6 +52,26 @@ class DataScreen extends StatelessWidget {
               'ChartCard for daily active users over the last 30 days (two '
               'datasets: Mobile and Web). Add a DataTable of top 5 countries '
               'by users with columns: Country, Users, Sessions, Conversion.',
+        ),
+        Preset(
+          label: 'Quick Actions List',
+          icon: Icons.list_alt_outlined,
+          prompt:
+              'Show a ListCard titled "Account" with 4 rows: '
+              '"Edit profile" (icon: edit, event: edit_profile), '
+              '"Notification settings" (icon: notifications, event: open_notifications), '
+              '"Download data" (icon: download, event: download_data), '
+              'and "Delete account" (icon: delete, destructive: true, event: delete_account). '
+              'Enable dividers.',
+        ),
+        Preset(
+          label: 'Empty State',
+          icon: Icons.inbox_outlined,
+          prompt:
+              'Show an EmptyState for an empty inbox: '
+              'icon "inbox", title "Your inbox is empty", '
+              'description "Messages from your team will appear here.", '
+              'actionLabel "Invite teammates", actionEvent "invite_team".',
         ),
       ],
     );

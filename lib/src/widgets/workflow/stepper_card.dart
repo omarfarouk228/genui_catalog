@@ -65,17 +65,23 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
               const SizedBox(height: 16),
             ],
             // Step indicators
-            Row(
+            Semantics(
+              label: 'Step ${_currentStep + 1} of ${steps.length}',
+              child: Row(
               children: List.generate(steps.length, (index) {
                 final isCompleted = index < _currentStep;
                 final isActive = index == _currentStep;
+                final stepTitle = steps[index]['title'] as String? ?? 'Step ${index + 1}';
+                final stepState = isCompleted ? 'completed' : isActive ? 'current' : 'pending';
                 return Expanded(
                   child: Row(
                     children: [
                       Expanded(
                         child: Column(
                           children: [
-                            Container(
+                            Semantics(
+                              label: '$stepTitle, $stepState',
+                              child: Container(
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
@@ -84,15 +90,15 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
                                     ? primary
                                     : isActive
                                         ? primary.withValues(alpha: 0.15)
-                                        : Colors.grey[200],
+                                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                                 border: isActive
                                     ? Border.all(color: primary, width: 2)
                                     : null,
                               ),
                               child: Center(
                                 child: isCompleted
-                                    ? const Icon(Icons.check,
-                                        size: 16, color: Colors.white)
+                                    ? Icon(Icons.check,
+                                        size: 16, color: Theme.of(context).colorScheme.onPrimary)
                                     : Text(
                                         '${index + 1}',
                                         style: TextStyle(
@@ -100,11 +106,11 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
                                           fontSize: 13,
                                           color: isActive
                                               ? primary
-                                              : Colors.grey[500],
+                                              : Theme.of(context).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                               ),
-                            ),
+                            )),
                           ],
                         ),
                       ),
@@ -114,14 +120,14 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
                             height: 2,
                             color: index < _currentStep
                                 ? primary
-                                : Colors.grey[300],
+                                : Theme.of(context).colorScheme.outlineVariant,
                           ),
                         ),
                     ],
                   ),
                 );
               }),
-            ),
+            )),
             const SizedBox(height: 20),
             // Current step content
             if (_currentStep < steps.length) ...[
@@ -135,7 +141,7 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
               Text(
                 steps[_currentStep]['description'] as String? ?? '',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
             ],

@@ -74,25 +74,30 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
               const SizedBox(height: 16),
             ],
             if (_submitted && widget.successMessage != null) ...[
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.green.withValues(alpha: 0.4)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        widget.successMessage!,
-                        style: const TextStyle(color: Colors.green),
-                      ),
+              Builder(
+                builder: (context) {
+                  final cs = Theme.of(context).colorScheme;
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: cs.primaryContainer,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: cs.primary.withValues(alpha: 0.4)),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check_circle, color: cs.onPrimaryContainer, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.successMessage!,
+                            style: TextStyle(color: cs.onPrimaryContainer),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ] else ...[
               Form(

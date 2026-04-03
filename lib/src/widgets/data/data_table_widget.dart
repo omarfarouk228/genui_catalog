@@ -5,6 +5,7 @@ class DataTableWidget extends StatelessWidget {
   final List<Map<String, dynamic>> columns;
   final List<Map<String, dynamic>> rows;
   final bool striped;
+  final int? totalRowCount;
 
   const DataTableWidget({
     super.key,
@@ -12,10 +13,13 @@ class DataTableWidget extends StatelessWidget {
     required this.columns,
     required this.rows,
     this.striped = false,
+    this.totalRowCount,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isTruncated = totalRowCount != null && totalRowCount! > rows.length;
+
     return Card(
       elevation: 2,
       child: Column(
@@ -31,7 +35,9 @@ class DataTableWidget extends StatelessWidget {
                     ),
               ),
             ),
-          SingleChildScrollView(
+          Semantics(
+            label: title != null ? 'Table: $title' : 'Data table',
+            child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
               headingRowColor: WidgetStateProperty.all(
@@ -71,7 +77,17 @@ class DataTableWidget extends StatelessWidget {
                 );
               }),
             ),
-          ),
+          )),
+          if (isTruncated)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+              child: Text(
+                'Showing ${rows.length} of $totalRowCount rows',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+            ),
         ],
       ),
     );

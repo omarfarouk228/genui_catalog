@@ -4,7 +4,7 @@
 /// Use [GenUICatalog.all] to get a [Catalog] containing all available items, or
 /// use the individual sub-catalogs ([DataCatalog], [WorkflowCatalog], [FormCatalog],
 /// [MediaCatalog]) for more granular control.
-library genui_catalog;
+library;
 
 export 'package:genui/genui.dart' show Catalog, CatalogItem, DataContext;
 
@@ -13,6 +13,7 @@ export 'src/catalogs/workflow_catalog.dart';
 export 'src/catalogs/form_catalog.dart';
 export 'src/catalogs/media_catalog.dart';
 
+export 'src/catalog_events.dart';
 export 'src/utils/color_utils.dart';
 export 'src/utils/icon_utils.dart';
 
@@ -27,11 +28,13 @@ import 'src/catalogs/media_catalog.dart';
 /// Usage:
 /// ```dart
 /// SurfaceController(
-///   catalogs: [
-///     BasicCatalogItems.asCatalog(),
-///     GenUICatalog.all,
-///   ],
+///   catalogs: [GenUICatalog.all],
 /// );
+/// ```
+///
+/// Listen to dispatched events using [CatalogEvents] constants:
+/// ```dart
+/// if (event.name == CatalogEvents.formSubmit) { ... }
 /// ```
 class GenUICatalog {
   GenUICatalog._();
@@ -44,9 +47,38 @@ class GenUICatalog {
     ...MediaCatalog.items,
   ];
 
+  /// Names of all registered catalog items. Useful for generating prompts or
+  /// validating AI-generated component references.
+  static List<String> get itemNames => allItems.map((i) => i.name).toList();
+
+  /// Finds a [CatalogItem] by name, or returns `null` if not found.
+  ///
+  /// Name matching is case-sensitive and must be exact.
+  static CatalogItem? findItem(String name) {
+    try {
+      return allItems.firstWhere((item) => item.name == name);
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// A [Catalog] containing every item from all sub-catalogs.
   static Catalog get all => asCatalog();
 
-  /// Creates a [Catalog] from all sub-catalog items.
-  static Catalog asCatalog() => Catalog(allItems);
+  /// Catalog ID for the combined GenUI Catalog.
+  static const String catalogId = 'genui_catalog';
+
+  /// Creates a [Catalog] from all sub-catalog items, with system prompt
+  /// fragments automatically generated from each sub-catalog's metadata.
+  static Catalog asCatalog() => Catalog(
+    allItems,
+    catalogId: catalogId,
+    systemPromptFragments: [
+      'Available components: ${itemNames.join(', ')}.',
+      ...DataCatalog.asCatalog().systemPromptFragments,
+      ...WorkflowCatalog.asCatalog().systemPromptFragments,
+      ...FormCatalog.asCatalog().systemPromptFragments,
+      ...MediaCatalog.asCatalog().systemPromptFragments,
+    ],
+  );
 }

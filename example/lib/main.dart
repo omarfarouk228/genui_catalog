@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:genui_catalog_example/utils/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'screens/home_screen.dart';
 import 'screens/ai_demo_screen.dart';
 import 'screens/data_screen.dart';
@@ -257,17 +259,13 @@ class _DesktopLayout extends StatelessWidget {
                         _SidebarLinkButton(
                           icon: Icons.public,
                           label: 'pub.dev',
-                          onTap: () => debugPrint(
-                            'Navigate to pub.dev/packages/genui_catalog',
-                          ),
+                          onTap: () => launchUrl(Uri.parse(pubUrl)),
                         ),
                         const SizedBox(height: 4),
                         _SidebarLinkButton(
                           icon: Icons.code,
                           label: 'GitHub',
-                          onTap: () => debugPrint(
-                            'Navigate to github.com/omarzaher00/genui',
-                          ),
+                          onTap: () => launchUrl(Uri.parse(githubUrl)),
                         ),
                       ],
                     ),

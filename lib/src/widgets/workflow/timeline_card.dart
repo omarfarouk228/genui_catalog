@@ -49,27 +49,37 @@ class _TimelineEvent extends StatelessWidget {
 
   const _TimelineEvent({required this.event, required this.isLast});
 
-  Color _dotColor(String? status) {
+  Color _dotColor(String? status, ColorScheme cs) {
     switch (status) {
       case 'done':
         return Colors.green;
       case 'active':
-        return Colors.blue;
+        return cs.primary;
       default:
-        return Colors.grey[400]!;
+        return cs.outlineVariant;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final time = event['time'] as String? ?? '';
     final title = event['title'] as String? ?? '';
     final description = event['description'] as String? ?? '';
     final status = event['status'] as String? ?? 'pending';
 
-    final color = _dotColor(status);
+    final color = _dotColor(status, cs);
 
-    return IntrinsicHeight(
+    final semanticLabel = [
+      if (time.isNotEmpty) time,
+      title,
+      if (description.isNotEmpty) description,
+      'Status: $status',
+    ].join('. ');
+
+    return Semantics(
+      label: semanticLabel,
+      child: IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,12 +87,12 @@ class _TimelineEvent extends StatelessWidget {
             width: 24,
             child: Column(
               children: [
-                _buildDot(status, color),
+                ExcludeSemantics(child: _buildDot(status, color, cs)),
                 if (!isLast)
                   Expanded(
                     child: Container(
                       width: 2,
-                      color: Colors.grey[300],
+                      color: cs.outlineVariant,
                     ),
                   ),
               ],
@@ -100,7 +110,7 @@ class _TimelineEvent extends StatelessWidget {
                       time,
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.grey[500],
+                        color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -118,7 +128,7 @@ class _TimelineEvent extends StatelessWidget {
                       description,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.grey[600],
+                        color: cs.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -128,10 +138,10 @@ class _TimelineEvent extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 
-  Widget _buildDot(String status, Color color) {
+  Widget _buildDot(String status, Color color, ColorScheme cs) {
     switch (status) {
       case 'done':
         return Container(
@@ -142,7 +152,7 @@ class _TimelineEvent extends StatelessWidget {
             color: color,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.check, size: 10, color: Colors.white),
+          child: Icon(Icons.check, size: 10, color: cs.onPrimary),
         );
       case 'active':
         return Container(
@@ -161,7 +171,7 @@ class _TimelineEvent extends StatelessWidget {
           margin: const EdgeInsets.only(top: 2),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey[300]!, width: 2),
+            border: Border.all(color: cs.outline, width: 2),
           ),
         );
     }

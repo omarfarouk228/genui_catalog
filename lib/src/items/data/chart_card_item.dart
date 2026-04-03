@@ -31,10 +31,9 @@ final chartCardItem = CatalogItem(
     final showLegend = data['showLegend'] as bool? ?? false;
 
     final rawDatasets = data['datasets'] as List<dynamic>? ?? [];
-    final datasets = rawDatasets
-        .whereType<Map<String, dynamic>>()
-        .take(6)
-        .toList();
+    final allDatasets = rawDatasets.whereType<Map<String, dynamic>>().toList();
+    const datasetLimit = 6;
+    final datasets = allDatasets.take(datasetLimit).toList();
 
     final rawXLabels = data['xLabels'] as List<dynamic>?;
     final xLabels = rawXLabels?.map((e) => e.toString()).toList();
@@ -46,6 +45,7 @@ final chartCardItem = CatalogItem(
       datasets: datasets,
       xLabels: xLabels,
       showLegend: showLegend,
+      totalDatasetCount: allDatasets.length > datasetLimit ? allDatasets.length : null,
     );
   },
 );

@@ -18,14 +18,15 @@ class KpiCardWidget extends StatelessWidget {
     this.accentColor,
   });
 
-  Color _trendColor() {
+  Color _trendColor(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     switch (trend) {
       case 'up':
         return Colors.green;
       case 'down':
-        return Colors.red;
+        return cs.error;
       default:
-        return Colors.grey;
+        return cs.onSurfaceVariant;
     }
   }
 
@@ -42,82 +43,108 @@ class KpiCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = accentColor ?? Theme.of(context).colorScheme.primary;
+    final cs = Theme.of(context).colorScheme;
+    final accent = accentColor ?? cs.primary;
+    final trendColor = _trendColor(context);
 
-    return Card(
-      elevation: 2,
-      clipBehavior: Clip.antiAlias,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(width: 4, color: accent),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      value,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (subtitle != null && subtitle!.isNotEmpty)
-                          Expanded(
-                            child: Text(
-                              subtitle!,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[500],
+    final trendLabel = trend == 'up'
+        ? 'trending up${trendValue != null ? ', $trendValue' : ''}'
+        : trend == 'down'
+        ? 'trending down${trendValue != null ? ', $trendValue' : ''}'
+        : null;
+    final semanticLabel = [
+      '$title: $value',
+      if (subtitle != null && subtitle!.isNotEmpty) subtitle!,
+      ?trendLabel,
+    ].join('. ');
+
+    return Semantics(
+      label: semanticLabel,
+      child: Card(
+        elevation: 2,
+        clipBehavior: Clip.antiAlias,
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 4, color: accent),
+              Flexible(
+                fit: FlexFit.loose,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        value,
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (subtitle != null && subtitle!.isNotEmpty)
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: Text(
+                                subtitle!,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: cs.onSurfaceVariant),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          if (trend != null && trend!.isNotEmpty)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: trendColor.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _trendIcon(),
+                                    size: 12,
+                                    color: trendColor,
                                   ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        if (trend != null && trend!.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: _trendColor().withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(_trendIcon(), size: 12, color: _trendColor()),
-                                if (trendValue != null && trendValue!.isNotEmpty) ...[
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    trendValue!,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: _trendColor(),
-                                      fontWeight: FontWeight.w600,
+                                  if (trendValue != null &&
+                                      trendValue!.isNotEmpty) ...[
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      trendValue!,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: trendColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

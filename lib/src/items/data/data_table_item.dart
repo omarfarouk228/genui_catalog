@@ -32,7 +32,9 @@ final dataTableItem = CatalogItem(
     final columns = rawColumns.whereType<Map<String, dynamic>>().toList();
 
     final rawRows = data['rows'] as List<dynamic>? ?? [];
-    final rows = rawRows.whereType<Map<String, dynamic>>().take(100).toList();
+    final allRows = rawRows.whereType<Map<String, dynamic>>().toList();
+    const rowLimit = 100;
+    final rows = allRows.take(rowLimit).toList();
 
     return DataTableWidget(
       key: ValueKey(itemContext.id),
@@ -40,6 +42,7 @@ final dataTableItem = CatalogItem(
       columns: columns,
       rows: rows,
       striped: striped,
+      totalRowCount: allRows.length > rowLimit ? allRows.length : null,
     );
   },
 );

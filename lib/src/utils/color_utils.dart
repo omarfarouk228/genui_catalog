@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Parses a hex color string like "#2196F3" or "2196F3" into a [Color].
-/// Returns [Colors.blue] as fallback if parsing fails.
-Color parseHexColor(String hexStr) {
+/// Returns [fallback] if parsing fails (defaults to [Colors.blue]).
+/// Callers with a [BuildContext] should pass `Theme.of(context).colorScheme.primary`
+/// as [fallback] to stay theme-aware.
+Color parseHexColor(String hexStr, {Color fallback = Colors.blue}) {
   try {
     final cleaned = hexStr.replaceAll('#', '').trim();
     if (cleaned.length == 6) {
@@ -11,5 +13,5 @@ Color parseHexColor(String hexStr) {
       return Color(int.parse(cleaned, radix: 16));
     }
   } catch (_) {}
-  return Colors.blue;
+  return fallback;
 }

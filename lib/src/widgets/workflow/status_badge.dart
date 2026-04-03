@@ -45,39 +45,49 @@ class StatusBadgeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bgColor = _backgroundColor();
+    final semanticLabel = description != null && description!.isNotEmpty
+        ? '$status: $label. $description'
+        : '$status: $label';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Chip(
-          avatar: Icon(
-            _statusIcon(),
-            size: 16,
-            color: bgColor.withValues(alpha: 0.9),
-          ),
-          label: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: bgColor,
+    return Semantics(
+      label: semanticLabel,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ExcludeSemantics(
+            child: Chip(
+              avatar: Icon(
+                _statusIcon(),
+                size: 16,
+                color: bgColor.withValues(alpha: 0.9),
+              ),
+              label: Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: bgColor,
+                ),
+              ),
+              backgroundColor: bgColor.withValues(alpha: 0.12),
+              side: BorderSide(color: bgColor.withValues(alpha: 0.4)),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
             ),
           ),
-          backgroundColor: bgColor.withValues(alpha: 0.12),
-          side: BorderSide(color: bgColor.withValues(alpha: 0.4)),
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-        ),
-        if (description != null && description!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(left: 4, top: 4),
-            child: Text(
-              description!,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+          if (description != null && description!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 4, top: 4),
+              child: ExcludeSemantics(
+                child: Text(
+                  description!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

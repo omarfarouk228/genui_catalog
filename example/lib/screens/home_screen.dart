@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:genui_catalog_example/utils/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../main.dart' show AppShellState;
 import '../services/api_key_provider.dart';
 
@@ -107,7 +109,7 @@ class _HeroSectionState extends State<_HeroSection> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Flutter · v0.1.0 · MIT License',
+                      'Flutter · v0.2.0 · MIT License',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -132,7 +134,7 @@ class _HeroSectionState extends State<_HeroSection> {
               const SizedBox(height: 16),
               // Subtitle
               Text(
-                '12 production-ready components for AI-generated Flutter UIs.\nSchema-defined, event-driven, plug-and-play.',
+                '17 production-ready components for AI-generated Flutter UIs.\nSchema-defined, event-driven, plug-and-play.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   height: 1.6,
@@ -147,8 +149,7 @@ class _HeroSectionState extends State<_HeroSection> {
                 alignment: WrapAlignment.center,
                 children: [
                   FilledButton.icon(
-                    onPressed: () =>
-                        debugPrint('pub.dev/packages/genui_catalog'),
+                    onPressed: () => launchUrl(Uri.parse(pubUrl)),
                     icon: const Icon(Icons.public, size: 18),
                     label: const Text('View on pub.dev'),
                     style: FilledButton.styleFrom(
@@ -159,7 +160,7 @@ class _HeroSectionState extends State<_HeroSection> {
                     ),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () => debugPrint('github.com/omarzaher00/genui'),
+                    onPressed: () => launchUrl(Uri.parse(githubUrl)),
                     icon: const Icon(Icons.code, size: 18),
                     label: const Text('GitHub'),
                     style: OutlinedButton.styleFrom(
@@ -493,6 +494,20 @@ const List<_ComponentInfo> _allComponents = [
     navIndex: 2,
   ),
   _ComponentInfo(
+    name: 'ListCard',
+    description: 'Tappable list rows in a card',
+    icon: Icons.list_alt_outlined,
+    color: _dataColor,
+    navIndex: 2,
+  ),
+  _ComponentInfo(
+    name: 'EmptyState',
+    description: 'Empty view with optional CTA',
+    icon: Icons.inbox_outlined,
+    color: _dataColor,
+    navIndex: 2,
+  ),
+  _ComponentInfo(
     name: 'TimelineCard',
     description: 'Vertical event timeline',
     icon: Icons.timeline,
@@ -531,6 +546,27 @@ const List<_ComponentInfo> _allComponents = [
     name: 'RatingInput',
     description: 'Star rating widget',
     icon: Icons.star_half,
+    color: _formColor,
+    navIndex: 4,
+  ),
+  _ComponentInfo(
+    name: 'SelectInput',
+    description: 'Dropdown single-value picker',
+    icon: Icons.arrow_drop_down_circle_outlined,
+    color: _formColor,
+    navIndex: 4,
+  ),
+  _ComponentInfo(
+    name: 'CheckboxGroup',
+    description: 'Multi-select checkboxes',
+    icon: Icons.check_box_outlined,
+    color: _formColor,
+    navIndex: 4,
+  ),
+  _ComponentInfo(
+    name: 'SwitchGroup',
+    description: 'List of on/off toggles',
+    icon: Icons.toggle_on_outlined,
     color: _formColor,
     navIndex: 4,
   ),

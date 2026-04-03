@@ -336,12 +336,16 @@ class _CatalogHeader extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: accentColor,
-                        letterSpacing: -0.4,
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: accentColor,
+                          letterSpacing: -0.4,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 8),
