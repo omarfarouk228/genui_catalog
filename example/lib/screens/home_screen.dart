@@ -86,8 +86,10 @@ class _HeroSectionState extends State<_HeroSection> {
             children: [
               // Badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(20),
@@ -98,7 +100,11 @@ class _HeroSectionState extends State<_HeroSection> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.auto_awesome, size: 14, color: colorScheme.primary),
+                    Icon(
+                      Icons.auto_awesome,
+                      size: 14,
+                      color: colorScheme.primary,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       'Flutter · v0.1.0 · MIT License',
@@ -116,11 +122,11 @@ class _HeroSectionState extends State<_HeroSection> {
               Text(
                 'GenUI Catalog',
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: colorScheme.onSurface,
-                      letterSpacing: -1.2,
-                      height: 1.1,
-                    ),
+                  fontWeight: FontWeight.w900,
+                  color: colorScheme.onSurface,
+                  letterSpacing: -1.2,
+                  height: 1.1,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -128,9 +134,9 @@ class _HeroSectionState extends State<_HeroSection> {
               Text(
                 '12 production-ready components for AI-generated Flutter UIs.\nSchema-defined, event-driven, plug-and-play.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      height: 1.6,
-                    ),
+                  color: colorScheme.onSurfaceVariant,
+                  height: 1.6,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -147,17 +153,20 @@ class _HeroSectionState extends State<_HeroSection> {
                     label: const Text('View on pub.dev'),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 14),
+                        horizontal: 20,
+                        vertical: 14,
+                      ),
                     ),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () =>
-                        debugPrint('github.com/omarzaher00/genui'),
+                    onPressed: () => debugPrint('github.com/omarzaher00/genui'),
                     icon: const Icon(Icons.code, size: 18),
                     label: const Text('GitHub'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 14),
+                        horizontal: 20,
+                        vertical: 14,
+                      ),
                     ),
                   ),
                 ],
@@ -371,7 +380,9 @@ class _ComponentGridSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _SectionTitle(
-                  title: 'All Components', count: _allComponents.length),
+                title: 'All Components',
+                count: _allComponents.length,
+              ),
               const SizedBox(height: 20),
               Wrap(
                 spacing: 12,
@@ -392,7 +403,7 @@ class _SectionTitle extends StatelessWidget {
   final String title;
   final int count;
 
-  const _SectionTitle({super.key, required this.title, required this.count});
+  const _SectionTitle({required this.title, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -402,9 +413,9 @@ class _SectionTitle extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.4,
-              ),
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.4,
+          ),
         ),
         const SizedBox(width: 10),
         Container(
@@ -570,8 +581,7 @@ class _ComponentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
-            final shellState =
-                context.findAncestorStateOfType<AppShellState>();
+            final shellState = context.findAncestorStateOfType<AppShellState>();
             shellState?.navigateTo(def.navIndex);
           },
           borderRadius: BorderRadius.circular(12),
