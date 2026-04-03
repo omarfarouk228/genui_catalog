@@ -26,7 +26,7 @@ dependencies:
 
 ## Demo
 
-[![Watch Demo]([https://www.youtube.com/watch?v=abc123XYZ](https://youtu.be/hDpVakPp4vc))
+[![Watch Demo]([https://www.youtube.com/watch?v=hDpVakPp4vc](https://www.youtube.com/watch?v=hDpVakPp4vc))
 
 ---
 
