@@ -19,14 +19,14 @@ A catalog of **17 high-level UI components** built on top of the [`genui`](https
 ```yaml
 dependencies:
   genui: ^0.8.0
-  genui_catalog: ^0.1.0
+  genui_catalog: ^0.2.0
 ```
 
 ---
 
 ## Demo
 
-[<img height="500" alt="GenUi" src="https://github.com/user-attachments/assets/5c1bd562-572d-4134-a09e-ec42d976f381" />](https://www.youtube.com/watch?v=hDpVakPp4vc)
+[<img src="docs/assets/genui.png" alt="GenUI Catalog" height="500">](https://www.youtube.com/watch?v=hDpVakPp4vc)
 
 ---
 
