@@ -1,7 +1,7 @@
 name: genui_catalog
 description: "Ready-to-use GenUI CatalogItems for building dynamic AI-generated UIs."
 version: 0.2.0
-homepage:
+homepage: https://github.com/omarfarouk228/genui_catalog
 
 environment:
   sdk: ^3.11.4

@@ -1,6 +1,6 @@
 name: genui_catalog_example
 description: "Interactive demo for the genui_catalog Flutter package."
-publish_to: "none"
+publish_to: none
 version: 0.1.0+1
 
 environment:
