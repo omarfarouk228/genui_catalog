@@ -26,7 +26,7 @@ dependencies:
 
 ## Demo
 
-https://github.com/user-attachments/assets/13452846-5a77-4138-bbd7-f23ce1e94980
+[![Watch Demo]([https://www.youtube.com/watch?v=abc123XYZ](https://youtu.be/hDpVakPp4vc))
 
 ---
 
