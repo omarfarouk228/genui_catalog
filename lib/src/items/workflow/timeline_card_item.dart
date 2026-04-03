@@ -22,22 +22,14 @@ final timelineCardItem = CatalogItem(
     },
     required: ['events'],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final title = data['title'] as String?;
     final rawEvents = data['events'] as List<dynamic>? ?? [];
-    final events = rawEvents
-        .whereType<Map<String, dynamic>>()
-        .toList();
+    final events = rawEvents.whereType<Map<String, dynamic>>().toList();
 
     return TimelineCardWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       title: title,
       events: events,
     );

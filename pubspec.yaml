@@ -1,11 +1,11 @@
 name: genui_catalog
-description: Ready-to-use GenUI CatalogItems for building dynamic AI-generated UIs.
-version: 0.1.0
-homepage: https://github.com/theessential/genui_catalog
+description: "Ready-to-use GenUI CatalogItems for building dynamic AI-generated UIs."
+version: 0.0.1
+homepage:
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ^3.11.4
+  flutter: ">=1.17.0"
 
 dependencies:
   flutter:
@@ -18,7 +18,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^6.0.0
 
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true

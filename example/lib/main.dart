@@ -48,11 +48,7 @@ class _NavItem {
 }
 
 const List<_NavItem> _navItems = [
-  _NavItem(
-    label: 'Home',
-    icon: Icons.home_outlined,
-    activeIcon: Icons.home,
-  ),
+  _NavItem(label: 'Home', icon: Icons.home_outlined, activeIcon: Icons.home),
   _NavItem(
     label: 'AI Demo',
     icon: Icons.auto_awesome_outlined,
@@ -231,7 +227,9 @@ class _DesktopLayout extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       itemCount: _navItems.length,
                       itemBuilder: (context, i) {
                         final item = _navItems[i];
@@ -260,14 +258,16 @@ class _DesktopLayout extends StatelessWidget {
                           icon: Icons.public,
                           label: 'pub.dev',
                           onTap: () => debugPrint(
-                              'Navigate to pub.dev/packages/genui_catalog'),
+                            'Navigate to pub.dev/packages/genui_catalog',
+                          ),
                         ),
                         const SizedBox(height: 4),
                         _SidebarLinkButton(
                           icon: Icons.code,
                           label: 'GitHub',
                           onTap: () => debugPrint(
-                              'Navigate to github.com/omarzaher00/genui'),
+                            'Navigate to github.com/omarzaher00/genui',
+                          ),
                         ),
                       ],
                     ),
@@ -278,10 +278,7 @@ class _DesktopLayout extends StatelessWidget {
           ),
           // Content area
           Expanded(
-            child: IndexedStack(
-              index: selectedIndex,
-              children: screens,
-            ),
+            child: IndexedStack(index: selectedIndex, children: screens),
           ),
         ],
       ),
@@ -307,9 +304,7 @@ class _SidebarNavItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Material(
-        color: isSelected
-            ? colorScheme.primaryContainer
-            : Colors.transparent,
+        color: isSelected ? colorScheme.primaryContainer : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: onTap,
@@ -330,8 +325,9 @@ class _SidebarNavItem extends StatelessWidget {
                   item.label,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: isSelected
                         ? colorScheme.primary
                         : colorScheme.onSurface,
@@ -371,11 +367,7 @@ class _SidebarLinkButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
             children: [
-              Icon(
-                icon,
-                size: 16,
-                color: colorScheme.onSurfaceVariant,
-              ),
+              Icon(icon, size: 16, color: colorScheme.onSurfaceVariant),
               const SizedBox(width: 10),
               Text(
                 label,
@@ -454,16 +446,10 @@ class _MobileLayout extends StatelessWidget {
         surfaceTintColor: colorScheme.primary,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Divider(
-            height: 1,
-            color: colorScheme.outlineVariant,
-          ),
+          child: Divider(height: 1, color: colorScheme.outlineVariant),
         ),
       ),
-      body: IndexedStack(
-        index: selectedIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: selectedIndex, children: screens),
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: onNavTap,

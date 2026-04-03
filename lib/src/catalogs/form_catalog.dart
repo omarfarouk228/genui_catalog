@@ -13,11 +13,11 @@ class FormCatalog {
 
   /// All items in the form catalog.
   static List<CatalogItem> get items => [
-        actionFormItem,
-        searchBarItem,
-        ratingInputItem,
-      ];
+    actionFormItem,
+    searchBarItem,
+    ratingInputItem,
+  ];
 
   /// Returns a [Catalog] containing all form catalog items.
-  static Catalog asCatalog() => Catalog(items: items);
+  static Catalog asCatalog() => Catalog(items);
 }

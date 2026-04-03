@@ -24,14 +24,8 @@ final chartCardItem = CatalogItem(
     },
     required: ['title', 'chartType', 'datasets'],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final title = data['title'] as String? ?? '';
     final chartType = data['chartType'] as String? ?? 'bar';
     final showLegend = data['showLegend'] as bool? ?? false;
@@ -46,7 +40,7 @@ final chartCardItem = CatalogItem(
     final xLabels = rawXLabels?.map((e) => e.toString()).toList();
 
     return ChartCardWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       title: title,
       chartType: chartType,
       datasets: datasets,

@@ -10,11 +10,8 @@ class MediaCatalog {
   MediaCatalog._();
 
   /// All items in the media catalog.
-  static List<CatalogItem> get items => [
-        profileCardItem,
-        mediaCardItem,
-      ];
+  static List<CatalogItem> get items => [profileCardItem, mediaCardItem];
 
   /// Returns a [Catalog] containing all media catalog items.
-  static Catalog asCatalog() => Catalog(items: items);
+  static Catalog asCatalog() => Catalog(items);
 }

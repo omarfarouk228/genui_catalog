@@ -13,24 +13,22 @@ final searchBarItem = CatalogItem(
     },
     required: [],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final placeholder = data['placeholder'] as String?;
     final debounceMs = data['debounceMs'] as int? ?? 300;
     final minChars = data['minChars'] as int? ?? 2;
 
     return SearchBarWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       placeholder: placeholder,
       debounceMs: debounceMs,
       minChars: minChars,
-      dispatchEvent: dispatchEvent,
+      dispatchEvent: (eventName) {
+        itemContext.dispatchEvent(
+          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        );
+      },
     );
   },
 );

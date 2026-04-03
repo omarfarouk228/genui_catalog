@@ -17,14 +17,8 @@ final kpiCardItem = CatalogItem(
     },
     required: ['title', 'value'],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final title = data['title'] as String? ?? '';
     final value = data['value'] as String? ?? '';
     final subtitle = data['subtitle'] as String?;
@@ -36,7 +30,7 @@ final kpiCardItem = CatalogItem(
         : null;
 
     return KpiCardWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       title: title,
       value: value,
       subtitle: subtitle,

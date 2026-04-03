@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:genui/genui.dart';
 import 'package:genui_catalog/genui_catalog.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:google_generative_ai/google_generative_ai.dart' hide TextPart;
 
 /// Wires [SurfaceController] + [A2uiTransportAdapter] + Gemini together.
 ///
@@ -38,33 +38,27 @@ class AiService {
 
   void _init(String apiKey) {
     controller = SurfaceController(
-      catalogs: [
-        CoreCatalogItems.asCatalog(),
-        GenUICatalog.all,
-      ],
+      catalogs: [BasicCatalogItems.asCatalog(), GenUICatalog.all],
     );
 
     _transport = A2uiTransportAdapter();
-    _transport.messageStream.listen(controller.handleMessage);
+    _transport.incomingMessages.listen(controller.handleMessage);
 
-    _conversation = Conversation(
-      surfaceController: controller,
-      transportAdapter: _transport,
-      onSurfaceAdded: (update) => onSurfaceAdded?.call(update.surfaceId),
-      onSurfaceDeleted: (update) => onSurfaceRemoved?.call(update.surfaceId),
-    );
+    _conversation = Conversation(controller: controller, transport: _transport);
 
     // Build the system prompt — includes every component schema from the
     // catalog so Gemini knows exactly what components exist.
     final promptBuilder = PromptBuilder.chat(
       catalog: GenUICatalog.all,
-      instructions: _systemInstructions,
+      systemPromptFragments: [_systemInstructions],
     );
 
     _model = GenerativeModel(
       model: 'gemini-2.5-flash',
       apiKey: apiKey,
-      systemInstruction: Content.system(promptBuilder.systemPrompt),
+      systemInstruction: Content.system(
+        promptBuilder.systemPrompt().map((fragment) => fragment).join('\n'),
+      ),
       generationConfig: GenerationConfig(
         temperature: 0.4,
         maxOutputTokens: 4096,
@@ -86,7 +80,12 @@ class AiService {
     _isWaiting = true;
 
     try {
-      _conversation.sendMessage(userText.trim());
+      _conversation.sendRequest(
+        ChatMessage(
+          role: ChatMessageRole.user,
+          parts: [TextPart(userText.trim())],
+        ),
+      );
 
       final stream = _chat!.sendMessageStream(Content.text(userText.trim()));
       await for (final response in stream) {

@@ -13,11 +13,11 @@ class WorkflowCatalog {
 
   /// All items in the workflow catalog.
   static List<CatalogItem> get items => [
-        timelineCardItem,
-        statusBadgeItem,
-        stepperCardItem,
-      ];
+    timelineCardItem,
+    statusBadgeItem,
+    stepperCardItem,
+  ];
 
   /// Returns a [Catalog] containing all workflow catalog items.
-  static Catalog asCatalog() => Catalog(items: items);
+  static Catalog asCatalog() => Catalog(items);
 }

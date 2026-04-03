@@ -25,30 +25,26 @@ final actionFormItem = CatalogItem(
     },
     required: ['fields'],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final title = data['title'] as String?;
     final submitLabel = data['submitLabel'] as String? ?? 'Submit';
     final successMessage = data['successMessage'] as String?;
 
     final rawFields = data['fields'] as List<dynamic>? ?? [];
-    final fields = rawFields
-        .whereType<Map<String, dynamic>>()
-        .toList();
+    final fields = rawFields.whereType<Map<String, dynamic>>().toList();
 
     return ActionFormWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       title: title,
       fields: fields,
       submitLabel: submitLabel,
       successMessage: successMessage,
-      dispatchEvent: dispatchEvent,
+      dispatchEvent: (eventName) {
+        itemContext.dispatchEvent(
+          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        );
+      },
     );
   },
 );

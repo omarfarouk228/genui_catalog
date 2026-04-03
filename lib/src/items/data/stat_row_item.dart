@@ -21,23 +21,11 @@ final statRowItem = CatalogItem(
     },
     required: ['stats'],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final rawStats = data['stats'] as List<dynamic>? ?? [];
-    final stats = rawStats
-        .whereType<Map<String, dynamic>>()
-        .take(4)
-        .toList();
+    final stats = rawStats.whereType<Map<String, dynamic>>().take(4).toList();
 
-    return StatRowWidget(
-      key: ValueKey(id),
-      stats: stats,
-    );
+    return StatRowWidget(key: ValueKey(itemContext.id), stats: stats);
   },
 );

@@ -14,26 +14,24 @@ final ratingInputItem = CatalogItem(
     },
     required: [],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final title = data['title'] as String?;
     final maxStars = data['maxStars'] as int? ?? 5;
     final label = data['label'] as String?;
     final allowHalf = data['allowHalf'] as bool? ?? false;
 
     return RatingInputWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       title: title,
       maxStars: maxStars,
       label: label,
       allowHalf: allowHalf,
-      dispatchEvent: dispatchEvent,
+      dispatchEvent: (eventName) {
+        itemContext.dispatchEvent(
+          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        );
+      },
     );
   },
 );

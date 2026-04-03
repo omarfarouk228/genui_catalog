@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genui_catalog_example/models/preset.dart';
 import '../widgets/catalog_demo_screen.dart';
 
 class DataScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class DataScreen extends StatelessWidget {
       accentColor: const Color(0xFF2196F3),
       icon: Icons.bar_chart_rounded,
       presets: const [
-        _Preset(
+        Preset(
           label: 'Revenue Dashboard',
           icon: Icons.trending_up,
           prompt:
@@ -23,7 +24,7 @@ class DataScreen extends StatelessWidget {
               'a StatRow with 4 operational metrics, and a line ChartCard showing '
               'monthly revenue vs target for the last 6 months.',
         ),
-        _Preset(
+        Preset(
           label: 'Sales Analytics',
           icon: Icons.insert_chart_outlined,
           prompt:
@@ -32,7 +33,7 @@ class DataScreen extends StatelessWidget {
               'DataTable listing the top 5 products by revenue with columns: '
               'Product, Category, Units Sold, Revenue, Growth.',
         ),
-        _Preset(
+        Preset(
           label: 'E-commerce KPIs',
           icon: Icons.shopping_cart_outlined,
           prompt:
@@ -42,7 +43,7 @@ class DataScreen extends StatelessWidget {
               'pie ChartCard showing traffic sources: Organic 45%, Paid 28%, '
               'Direct 15%, Social 12%.',
         ),
-        _Preset(
+        Preset(
           label: 'User Analytics',
           icon: Icons.people_outline,
           prompt:

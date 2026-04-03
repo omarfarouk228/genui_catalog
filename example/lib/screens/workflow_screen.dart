@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:genui_catalog_example/models/preset.dart';
 import '../widgets/catalog_demo_screen.dart';
 
 class WorkflowScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class WorkflowScreen extends StatelessWidget {
       accentColor: const Color(0xFFFF9800),
       icon: Icons.account_tree_rounded,
       presets: const [
-        _Preset(
+        Preset(
           label: 'Order Status',
           icon: Icons.local_shipping_outlined,
           prompt:
@@ -25,7 +26,7 @@ class WorkflowScreen extends StatelessWidget {
               'Delivered (pending). Also add a StatusBadge "In Transit" with '
               'status info.',
         ),
-        _Preset(
+        Preset(
           label: 'Deployment Pipeline',
           icon: Icons.rocket_launch_outlined,
           prompt:
@@ -37,7 +38,7 @@ class WorkflowScreen extends StatelessWidget {
               'showNavigation true. Add a StatusBadge "Awaiting Approval" with '
               'status warning.',
         ),
-        _Preset(
+        Preset(
           label: 'Incident Timeline',
           icon: Icons.warning_amber_outlined,
           prompt:
@@ -48,7 +49,7 @@ class WorkflowScreen extends StatelessWidget {
               '(active, 15:45), Monitoring (pending). Add StatusBadges for '
               '"Severity P1" (error) and "Status: Resolving" (warning).',
         ),
-        _Preset(
+        Preset(
           label: 'Onboarding Flow',
           icon: Icons.person_add_outlined,
           prompt:

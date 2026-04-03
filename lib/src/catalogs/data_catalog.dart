@@ -15,12 +15,12 @@ class DataCatalog {
 
   /// All items in the data catalog.
   static List<CatalogItem> get items => [
-        kpiCardItem,
-        dataTableItem,
-        chartCardItem,
-        statRowItem,
-      ];
+    kpiCardItem,
+    dataTableItem,
+    chartCardItem,
+    statRowItem,
+  ];
 
   /// Returns a [Catalog] containing all data catalog items.
-  static Catalog asCatalog() => Catalog(items: items);
+  static Catalog asCatalog() => Catalog(items);
 }

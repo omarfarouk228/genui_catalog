@@ -28,7 +28,7 @@ import 'src/catalogs/media_catalog.dart';
 /// ```dart
 /// SurfaceController(
 ///   catalogs: [
-///     CoreCatalogItems.asCatalog(),
+///     BasicCatalogItems.asCatalog(),
 ///     GenUICatalog.all,
 ///   ],
 /// );
@@ -38,15 +38,15 @@ class GenUICatalog {
 
   /// All [CatalogItem]s from every sub-catalog combined.
   static List<CatalogItem> get allItems => [
-        ...DataCatalog.items,
-        ...WorkflowCatalog.items,
-        ...FormCatalog.items,
-        ...MediaCatalog.items,
-      ];
+    ...DataCatalog.items,
+    ...WorkflowCatalog.items,
+    ...FormCatalog.items,
+    ...MediaCatalog.items,
+  ];
 
   /// A [Catalog] containing every item from all sub-catalogs.
   static Catalog get all => asCatalog();
 
   /// Creates a [Catalog] from all sub-catalog items.
-  static Catalog asCatalog() => Catalog(items: allItems);
+  static Catalog asCatalog() => Catalog(allItems);
 }

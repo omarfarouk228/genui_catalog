@@ -13,20 +13,14 @@ final statusBadgeItem = CatalogItem(
     },
     required: ['label', 'status'],
   ),
-  widgetBuilder: ({
-    required Map<String, Object?> data,
-    required String id,
-    required Widget Function(Widget) buildChild,
-    required Function(String event) dispatchEvent,
-    required BuildContext context,
-    required DataContext dataContext,
-  }) {
+  widgetBuilder: (itemContext) {
+    final data = itemContext.data as Map<String, dynamic>;
     final label = data['label'] as String? ?? '';
     final status = data['status'] as String? ?? 'neutral';
     final description = data['description'] as String?;
 
     return StatusBadgeWidget(
-      key: ValueKey(id),
+      key: ValueKey(itemContext.id),
       label: label,
       status: status,
       description: description,

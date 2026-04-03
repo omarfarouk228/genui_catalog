@@ -9,29 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-#### DataCatalog
-- **KpiCard** — Single metric card with title, value, subtitle, trend badge (up/down/neutral) and hex accent color
-- **DataTable** — Scrollable tabular data with configurable columns, up to 100 rows, optional striped rows
-- **ChartCard** — Line, Bar, and Pie charts powered by `fl_chart`, supports up to 6 datasets with legend
-- **StatRow** — Horizontal row of 2–4 stat items with icon, value, and label
+- Initial release of genui_catalog with full catalog scaffolding:
+  - `DataCatalog` : KpiCard, DataTable, ChartCard, StatRow
+  - `WorkflowCatalog`: TimelineCard, StatusBadge, StepperCard
+  - `FormCatalog`: ActionForm, SearchBar, RatingInput
+  - `MediaCatalog`: ProfileCard, MediaCard
+- Utilities: `parseHexColor()`, `parseIconName()`
+- Root helper: `GenUICatalog.all` and subcatalog `asCatalog()` extensions
 
-#### WorkflowCatalog
-- **TimelineCard** — Vertical event timeline with done/active/pending status indicators
-- **StatusBadge** — Colored chip for success/warning/error/info/neutral statuses
-- **StepperCard** — Multi-step process navigator with optional Prev/Next navigation buttons dispatching `next_step` / `prev_step` events
+### Fixed
 
-#### FormCatalog
-- **ActionForm** — Dynamic form renderer supporting text/email/number/textarea fields with submit action; dispatches `form_submit` event
-- **SearchBar** — Debounced search input with configurable delay and minimum character threshold; dispatches `search_query` event
-- **RatingInput** — Star rating widget with configurable max stars and optional half-star support; dispatches `rating_submitted` event
+- Updated `CatalogItem.widgetBuilder` API to use `CatalogItemContext` (genui 0.8.0 compatibility)
+- Fixed `dispatchEvent` conversion for widgets requiring `void Function(String)`
+- Added comprehensive unit tests for `StatusBadge` and `ActionForm`.
 
-#### MediaCatalog
-- **ProfileCard** — Avatar (or initials fallback), name, role, detail list, and custom action buttons
-- **MediaCard** — Image, title, body text, tag chips, and custom action buttons
+## [0.1.1] - 2026-04-03
 
-#### Infrastructure
-- `GenUICatalog.all` — Single `Catalog` combining all 12 items, ready for `SurfaceController`
-- Individual sub-catalog classes (`DataCatalog`, `WorkflowCatalog`, `FormCatalog`, `MediaCatalog`) each exposing `items` and `asCatalog()`
-- `parseHexColor()` utility for `"#RRGGBB"` color strings
-- `parseIconName()` utility mapping icon name strings to `IconData`
-- Example Flutter application showcasing all 12 components with mock data
+### Added
+
+- Unit tests: `test/genui_catalog_test.dart` (StatusBadge widget + ActionForm event dispatch)
+
+### Fixed
+
+- `genui_catalog` now passes `flutter test` and `flutter analyze` with no errors (only style/info warnings)

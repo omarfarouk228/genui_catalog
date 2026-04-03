@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
+import 'package:genui_catalog_example/models/preset.dart';
 import '../services/ai_service.dart';
 import '../services/api_key_provider.dart';
 
@@ -13,7 +14,7 @@ class CatalogDemoScreen extends StatefulWidget {
   final int componentCount;
   final Color accentColor;
   final IconData icon;
-  final List<_Preset> presets;
+  final List<Preset> presets;
 
   const CatalogDemoScreen({
     super.key,
@@ -53,7 +54,12 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
         if (mounted) setState(() => _surfaceIds.remove(id));
       }
       ..onError = (e) {
-        if (mounted) setState(() { _error = e; _loading = false; });
+        if (mounted) {
+          setState(() {
+            _error = e;
+            _loading = false;
+          });
+        }
       };
   }
 
@@ -120,10 +126,10 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
                   Text(
                     'Try a preset prompt',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurfaceVariant,
-                          letterSpacing: 0.3,
-                        ),
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurfaceVariant,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Wrap(
@@ -137,8 +143,9 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
                         avatar: Icon(preset.icon, size: 16),
                         selected: selected,
                         onSelected: (_) => _runPreset(i),
-                        selectedColor:
-                            widget.accentColor.withValues(alpha: 0.15),
+                        selectedColor: widget.accentColor.withValues(
+                          alpha: 0.15,
+                        ),
                         checkmarkColor: widget.accentColor,
                         side: BorderSide(
                           color: selected
@@ -181,7 +188,8 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
       return _EmptyState(
         icon: Icons.vpn_key_outlined,
         title: 'API key required',
-        subtitle: 'Add your Gemini API key on the Home screen to enable the interactive demo.',
+        subtitle:
+            'Add your Gemini API key on the Home screen to enable the interactive demo.',
         accentColor: colorScheme.primary,
       );
     }
@@ -246,14 +254,17 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
         // "Rendered by genui" label
         Row(
           children: [
-            Icon(Icons.auto_awesome,
-                size: 14, color: colorScheme.onSurfaceVariant),
+            Icon(
+              Icons.auto_awesome,
+              size: 14,
+              color: colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: 6),
             Text(
               'Rendered via genui · ${widget.catalogName}',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -261,9 +272,7 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
         ..._surfaceIds.map(
           (id) => Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: Surface(
-              surfaceContext: _service!.controller.surfaceContext(id),
-            ),
+            child: Surface(surfaceContext: _service!.controller.contextFor(id)),
           ),
         ),
       ],
@@ -330,15 +339,17 @@ class _CatalogHeader extends StatelessWidget {
                     Text(
                       name,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: accentColor,
-                            letterSpacing: -0.4,
-                          ),
+                        fontWeight: FontWeight.w800,
+                        color: accentColor,
+                        letterSpacing: -0.4,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: accentColor,
                         borderRadius: BorderRadius.circular(20),
@@ -358,8 +369,8 @@ class _CatalogHeader extends StatelessWidget {
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -410,37 +421,21 @@ class _EmptyState extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface,
-                ),
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             subtitle,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+              color: colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Preset model
-// ---------------------------------------------------------------------------
-
-class _Preset {
-  final String label;
-  final IconData icon;
-  final String prompt;
-
-  const _Preset({
-    required this.label,
-    required this.icon,
-    required this.prompt,
-  });
 }
