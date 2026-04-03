@@ -149,7 +149,17 @@ class _HeroSectionState extends State<_HeroSection> {
                 alignment: WrapAlignment.center,
                 children: [
                   FilledButton.icon(
-                    onPressed: () => launchUrl(Uri.parse(pubUrl)),
+                    onPressed: () async {
+                      final uri = Uri.parse(pubUrl);
+
+                      final canLaunch = await canLaunchUrl(uri);
+                      if (canLaunch) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.public, size: 18),
                     label: const Text('View on pub.dev'),
                     style: FilledButton.styleFrom(
@@ -160,7 +170,17 @@ class _HeroSectionState extends State<_HeroSection> {
                     ),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () => launchUrl(Uri.parse(githubUrl)),
+                    onPressed: () async {
+                      final uri = Uri.parse(githubUrl);
+
+                      final canLaunch = await canLaunchUrl(uri);
+                      if (canLaunch) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.code, size: 18),
                     label: const Text('GitHub'),
                     style: OutlinedButton.styleFrom(

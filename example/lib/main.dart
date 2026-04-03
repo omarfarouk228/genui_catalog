@@ -259,13 +259,33 @@ class _DesktopLayout extends StatelessWidget {
                         _SidebarLinkButton(
                           icon: Icons.public,
                           label: 'pub.dev',
-                          onTap: () => launchUrl(Uri.parse(pubUrl)),
+                          onTap: () async {
+                            final uri = Uri.parse(pubUrl);
+
+                            final canLaunch = await canLaunchUrl(uri);
+                            if (canLaunch) {
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(height: 4),
                         _SidebarLinkButton(
                           icon: Icons.code,
                           label: 'GitHub',
-                          onTap: () => launchUrl(Uri.parse(githubUrl)),
+                          onTap: () async {
+                            final uri = Uri.parse(githubUrl);
+
+                            final canLaunch = await canLaunchUrl(uri);
+                            if (canLaunch) {
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
