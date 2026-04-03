@@ -26,7 +26,7 @@ dependencies:
 
 ## Demo
 
-[<img src="docs/assets/genui.png" alt="GenUI Catalog" height="500">](https://www.youtube.com/watch?v=hDpVakPp4vc)
+[<img src="doc/assets/genui.png" alt="GenUI Catalog" height="500">](https://www.youtube.com/watch?v=hDpVakPp4vc)
 
 ---
 
