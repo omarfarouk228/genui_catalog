@@ -24,6 +24,12 @@ dependencies:
 
 ---
 
+## Demo
+
+https://github.com/user-attachments/assets/13452846-5a77-4138-bbd7-f23ce1e94980
+
+---
+
 ## Getting started
 
 Register the catalog with your `SurfaceController`. The system prompt is generated automatically from the catalog metadata, so the LLM always knows which components are available and what data each one expects.
