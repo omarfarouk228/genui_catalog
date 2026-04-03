@@ -26,7 +26,7 @@ dependencies:
 
 ## Demo
 
-[![Watch Demo]([https://www.youtube.com/watch?v=hDpVakPp4vc](https://www.youtube.com/watch?v=hDpVakPp4vc))
+[![Flutter App Demo](https://img.youtube.com/vi/abc123XYZ/0.jpg)](https://www.youtube.com/watch?v=hDpVakPp4vc)
 
 ---
 
