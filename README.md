@@ -26,7 +26,7 @@ dependencies:
 
 ## Demo
 
-[![Flutter App Demo](https://img.youtube.com/vi/abc123XYZ/0.jpg)](https://www.youtube.com/watch?v=hDpVakPp4vc)
+[<img height="500" alt="GenUi" src="https://github.com/user-attachments/assets/5c1bd562-572d-4134-a09e-ec42d976f381" />](https://www.youtube.com/watch?v=hDpVakPp4vc)
 
 ---
 
