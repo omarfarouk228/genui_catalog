@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-04-03
+
+### Changed
+
+- **`AiService` JSON parsing** — replaced the multi-strategy extraction pipeline
+  (5 fallback strategies, 7 helper methods) with a single `_extractJsonObjectsFromContent`
+  call using brace-counting. Validation now also checks for `createSurface` or
+  `updateComponents` keys so non-A2UI JSON objects are silently skipped without
+  extra repair attempts.
+- **`AiService` truncation repair** — added trailing-brace repair inside
+  `_extractJsonObjectsFromContent` so LLM-truncated JSON (unclosed `}`) is
+  recovered gracefully before being dispatched to the transport.
+
+### Fixed
+
+- **`CHANGELOG.md` formatting** — corrected list marker from `+` to `-` in the
+  `RatingInputWidget` half-star detection entry.
+
+---
+
 ## [0.2.0] - 2026-04-03
 
 ### Added
@@ -71,8 +91,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   moved from the item into the widget and produces a debug `assert` with an
   explanatory message.
 - **`RatingInputWidget` half-star detection** — rewrote using per-star `SizedBox`
-  + `Stack` with two transparent `GestureDetector` halves, replacing the broken
-  `findRenderObject()` approximation.
+  - `Stack` with two transparent `GestureDetector` halves, replacing the broken
+    `findRenderObject()` approximation.
 - **`RatingInputWidget` keyboard/accessibility** — added `Semantics(slider: true)`
   with `onIncrease` / `onDecrease` callbacks so assistive technologies can
   increment and decrement the rating.

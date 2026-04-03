@@ -109,7 +109,7 @@ class _HeroSectionState extends State<_HeroSection> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Flutter · v0.2.0 · MIT License',
+                      'Flutter · v0.2.1 · MIT License',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

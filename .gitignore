@@ -121,3 +121,5 @@ app.*.symbols
 
 .claude/
 CONTEXT.md
+
+.DS_Store

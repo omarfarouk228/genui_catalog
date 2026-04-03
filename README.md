@@ -19,7 +19,7 @@ A catalog of **17 high-level UI components** built on top of the [`genui`](https
 ```yaml
 dependencies:
   genui: ^0.8.0
-  genui_catalog: ^0.2.0
+  genui_catalog: ^0.2.1
 ```
 
 ---
@@ -127,13 +127,11 @@ Renders tabular data with configurable columns. Recommended ≤ 50 rows, hard li
 {
   "title": "Team Members",
   "columns": [
-    { "key": "name",   "label": "Name" },
-    { "key": "role",   "label": "Role" },
+    { "key": "name", "label": "Name" },
+    { "key": "role", "label": "Role" },
     { "key": "status", "label": "Status", "align": "center" }
   ],
-  "rows": [
-    { "name": "Alice", "role": "Designer", "status": "Active" }
-  ],
+  "rows": [{ "name": "Alice", "role": "Designer", "status": "Active" }],
   "striped": true
 }
 ```
@@ -153,8 +151,16 @@ Renders a Line, Bar, or Pie chart. Supports up to 6 datasets. Displays an indica
   "xLabels": ["Jan", "Feb", "Mar", "Apr"],
   "showLegend": true,
   "datasets": [
-    { "label": "Revenue",  "color": "#2196F3", "values": [42000, 55000, 48000, 63000] },
-    { "label": "Expenses", "color": "#E91E63", "values": [30000, 38000, 35000, 41000] }
+    {
+      "label": "Revenue",
+      "color": "#2196F3",
+      "values": [42000, 55000, 48000, 63000]
+    },
+    {
+      "label": "Expenses",
+      "color": "#E91E63",
+      "values": [30000, 38000, 35000, 41000]
+    }
   ]
 }
 ```
@@ -170,8 +176,18 @@ Displays 2–4 stats side by side.
 ```json
 {
   "stats": [
-    { "label": "Users",  "value": "8,291", "icon": "people",        "color": "#2196F3" },
-    { "label": "Orders", "value": "1,432", "icon": "shopping_cart",  "color": "#FF9800" }
+    {
+      "label": "Users",
+      "value": "8,291",
+      "icon": "people",
+      "color": "#2196F3"
+    },
+    {
+      "label": "Orders",
+      "value": "1,432",
+      "icon": "shopping_cart",
+      "color": "#FF9800"
+    }
   ]
 }
 ```
@@ -230,9 +246,14 @@ A card containing a scrollable list of tappable rows, each with an optional icon
   "title": "Quick Actions",
   "showDividers": true,
   "items": [
-    { "title": "Edit profile",  "icon": "edit",   "event": "edit_profile"  },
-    { "title": "Share",         "icon": "share",   "event": "share"         },
-    { "title": "Delete account","icon": "delete",  "event": "delete_account","destructive": true }
+    { "title": "Edit profile", "icon": "edit", "event": "edit_profile" },
+    { "title": "Share", "icon": "share", "event": "share" },
+    {
+      "title": "Delete account",
+      "icon": "delete",
+      "event": "delete_account",
+      "destructive": true
+    }
   ]
 }
 ```
@@ -272,10 +293,30 @@ Shows a vertical sequence of events with status indicators.
 {
   "title": "Order #1042",
   "events": [
-    { "time": "09:00", "title": "Order placed",     "description": "Payment confirmed", "status": "done"    },
-    { "time": "11:30", "title": "Shipped",           "description": "Tracking: XYZ123",  "status": "done"    },
-    { "time": "14:00", "title": "Out for delivery",  "description": "",                  "status": "active"  },
-    { "time": "17:00", "title": "Delivered",         "description": "",                  "status": "pending" }
+    {
+      "time": "09:00",
+      "title": "Order placed",
+      "description": "Payment confirmed",
+      "status": "done"
+    },
+    {
+      "time": "11:30",
+      "title": "Shipped",
+      "description": "Tracking: XYZ123",
+      "status": "done"
+    },
+    {
+      "time": "14:00",
+      "title": "Out for delivery",
+      "description": "",
+      "status": "active"
+    },
+    {
+      "time": "17:00",
+      "title": "Delivered",
+      "description": "",
+      "status": "pending"
+    }
   ]
 }
 ```
@@ -310,9 +351,9 @@ Guides the user through a multi-step process. Dispatches `CatalogEvents.stepNext
   "initialStep": 0,
   "showNavigation": true,
   "steps": [
-    { "title": "Profile",  "description": "Fill in your details." },
-    { "title": "Security", "description": "Set up 2FA."           },
-    { "title": "Finish",   "description": "Review and confirm."   }
+    { "title": "Profile", "description": "Fill in your details." },
+    { "title": "Security", "description": "Set up 2FA." },
+    { "title": "Finish", "description": "Review and confirm." }
   ]
 }
 ```
@@ -331,9 +372,14 @@ Renders a dynamic form and dispatches `CatalogEvents.formSubmit` when the user s
   "submitLabel": "Send message",
   "successMessage": "Thanks! We'll be in touch.",
   "fields": [
-    { "key": "name",    "label": "Full name", "type": "text",     "required": true  },
-    { "key": "email",   "label": "Email",     "type": "email",    "required": true  },
-    { "key": "message", "label": "Message",   "type": "textarea", "required": false }
+    { "key": "name", "label": "Full name", "type": "text", "required": true },
+    { "key": "email", "label": "Email", "type": "email", "required": true },
+    {
+      "key": "message",
+      "label": "Message",
+      "type": "textarea",
+      "required": false
+    }
   ]
 }
 ```
@@ -382,8 +428,8 @@ A labelled dropdown that lets the user pick one value from a list of options. Di
   "event": "country_selected",
   "options": [
     { "value": "us", "label": "United States" },
-    { "value": "fr", "label": "France"         },
-    { "value": "de", "label": "Germany"        }
+    { "value": "fr", "label": "France" },
+    { "value": "de", "label": "Germany" }
   ]
 }
 ```
@@ -403,8 +449,8 @@ A labeled list of checkboxes where the user can select multiple options. Dispatc
   "initialValues": ["email"],
   "options": [
     { "value": "email", "label": "Email notifications" },
-    { "value": "sms",   "label": "SMS notifications"   },
-    { "value": "push",  "label": "Push notifications"  }
+    { "value": "sms", "label": "SMS notifications" },
+    { "value": "push", "label": "Push notifications" }
   ]
 }
 ```
@@ -421,8 +467,16 @@ A labeled list of on/off toggles. Dispatches `<event>:<value>:<on|off>` each tim
   "event": "privacy_changed",
   "initialValues": ["analytics"],
   "options": [
-    { "value": "analytics",    "label": "Analytics",    "subtitle": "Help improve the app" },
-    { "value": "personalized", "label": "Personalised", "subtitle": "Tailored content"     }
+    {
+      "value": "analytics",
+      "label": "Analytics",
+      "subtitle": "Help improve the app"
+    },
+    {
+      "value": "personalized",
+      "label": "Personalised",
+      "subtitle": "Tailored content"
+    }
   ]
 }
 ```
@@ -441,12 +495,12 @@ Shows an avatar (or initials fallback), contact details, and action buttons.
   "role": "Senior Engineer",
   "avatarUrl": "https://example.com/avatar.jpg",
   "details": [
-    { "label": "Email",    "value": "sarah@acme.com"   },
+    { "label": "Email", "value": "sarah@acme.com" },
     { "label": "Location", "value": "San Francisco" }
   ],
   "actions": [
     { "label": "Message", "event": "profile_message" },
-    { "label": "Call",    "event": "profile_call"    }
+    { "label": "Call", "event": "profile_call" }
   ]
 }
 ```
@@ -466,8 +520,8 @@ A content card with an optional image, body text, tags, and action buttons.
   "imageUrl": "https://example.com/cover.jpg",
   "tags": ["flutter", "AI", "genui"],
   "actions": [
-    { "label": "Read more", "event": "media_open"  },
-    { "label": "Share",     "event": "media_share" }
+    { "label": "Read more", "event": "media_open" },
+    { "label": "Share", "event": "media_share" }
   ]
 }
 ```
