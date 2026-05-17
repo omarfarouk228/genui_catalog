@@ -5,7 +5,7 @@ class ActionFormWidget extends StatefulWidget {
   final List<Map<String, dynamic>> fields;
   final String submitLabel;
   final String? successMessage;
-  final void Function(String event) dispatchEvent;
+  final void Function(String event, Map<String, String> values) dispatchEvent;
 
   const ActionFormWidget({
     super.key,
@@ -50,7 +50,7 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
       for (final entry in _controllers.entries) {
         values[entry.key] = entry.value.text;
       }
-      widget.dispatchEvent('form_submit');
+      widget.dispatchEvent('form_submit', values);
       setState(() => _submitted = true);
     }
   }

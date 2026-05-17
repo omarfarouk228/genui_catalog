@@ -40,9 +40,13 @@ final actionFormItem = CatalogItem(
       fields: fields,
       submitLabel: submitLabel,
       successMessage: successMessage,
-      dispatchEvent: (eventName) {
+      dispatchEvent: (eventName, values) {
         itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+          UserActionEvent(
+            name: eventName,
+            sourceComponentId: itemContext.id,
+            context: values.map((k, v) => MapEntry(k, v as Object)),
+          ),
         );
       },
     );
