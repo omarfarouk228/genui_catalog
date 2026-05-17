@@ -20,7 +20,7 @@ void main() {
               },
             ],
             submitLabel: 'Submit',
-            dispatchEvent: (_) {},
+            dispatchEvent: (_, _) {},
           ),
         ),
       );
@@ -43,7 +43,7 @@ void main() {
               },
             ],
             submitLabel: 'Go',
-            dispatchEvent: (_) {},
+            dispatchEvent: (_, _) {},
           ),
         ),
       );
@@ -61,7 +61,7 @@ void main() {
             ],
             submitLabel: 'OK',
             successMessage: 'Saved!',
-            dispatchEvent: (_) {},
+            dispatchEvent: (_, _) {},
           ),
         ),
       );
