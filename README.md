@@ -19,7 +19,7 @@ A catalog of **17 high-level UI components** built on top of the [`genui`](https
 ```yaml
 dependencies:
   genui: ^0.8.0
-  genui_catalog: ^0.2.2
+  genui_catalog: ^0.3.0
 ```
 
 ---
@@ -364,7 +364,7 @@ Guides the user through a multi-step process. Dispatches `CatalogEvents.stepNext
 
 #### ActionForm
 
-Renders a dynamic form and dispatches `CatalogEvents.formSubmit` when the user submits.
+Renders a dynamic form and dispatches `CatalogEvents.formSubmit` with the submitted field values when the user submits.
 
 ```json
 {
