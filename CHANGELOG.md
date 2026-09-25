@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-09-25
+
+### Fixed
+
+- **README** — the "Getting started" and "Listening to events" snippets now compile with
+  genui 0.10: `PromptBuilder.chat` takes `systemPromptFragments` (not `instructions`), and
+  events are read from `SurfaceController.onSubmit` (there is no `controller.on<UserActionEvent>`).
+  Added how to render a `Surface` and how to plug an LLM through `A2uiTransportAdapter`.
+- **README** — `DataCatalog` also lists `Column` / `Row`; the example section mentions all 17
+  components (was 12).
+- **`CatalogEvents` dartdoc** — points to `SurfaceController.onSubmit`.
+
+---
+
 ## [0.4.0] - 2026-09-25
 
 ### Changed
