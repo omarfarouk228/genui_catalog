@@ -47,15 +47,10 @@ class AiService {
     );
 
     _transport = A2uiTransportAdapter(onSend: _handleTransportSend);
-    _transport.incomingMessages.listen((message) {
-      try {
-        controller.handleMessage(message);
-      } catch (e, st) {
-        debugPrint('SurfaceController.handleMessage error: $e\n$st');
-        onError?.call(e);
-      }
-    });
 
+    // Conversation already forwards transport.incomingMessages to
+    // controller.handleMessage. Do not subscribe a second time: since genui
+    // 0.10 a duplicate createSurface for an active surface is an error.
     _conversation = Conversation(controller: controller, transport: _transport);
 
     _controllerSubmitSubscription = controller.onSubmit.listen((message) {

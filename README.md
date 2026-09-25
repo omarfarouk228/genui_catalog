@@ -10,7 +10,7 @@
 
 A catalog of **17 high-level UI components** built on top of the [`genui`](https://pub.dev/packages/genui) SDK. Each component ships with its JSON schema, widget binding, event handling, dark/light mode support, and screen-reader semantics — ready to drop into any GenUI-powered app.
 
-> **Requires** [`genui`](https://pub.dev/packages/genui) `^0.8.0`
+> **Requires** [`genui`](https://pub.dev/packages/genui) `^0.10.3`
 
 ---
 
@@ -18,8 +18,8 @@ A catalog of **17 high-level UI components** built on top of the [`genui`](https
 
 ```yaml
 dependencies:
-  genui: ^0.8.0
-  genui_catalog: ^0.3.0
+  genui: ^0.10.3
+  genui_catalog: ^0.4.0
 ```
 
 ---

@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  genui: ^0.8.0
+  genui: ^0.10.3
   url_launcher: ^6.3.2
   genui_catalog:
     path: ../

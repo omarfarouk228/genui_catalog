@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-09-25
+
+### Changed
+
+- **Requires `genui` `^0.10.3`** (was `^0.8.0`). genui 0.10 moved its A2UI protocol
+  layer onto `package:a2ui_core`; the catalog-widget authoring API is unchanged, so
+  every `CatalogItem` in this package works without modification.
+- **Requires `json_schema_builder` `^0.1.7`** (was `^0.1.3`). genui 0.10 relies on
+  `SchemaRegistry`, which older resolved versions did not provide, causing compile
+  errors in apps with an existing lockfile.
+
+### Fixed
+
+- **Example `AiService`** no longer forwards `transport.incomingMessages` to
+  `SurfaceController.handleMessage` a second time (`Conversation` already does it).
+  Since genui 0.10 a duplicate `createSurface` for an active surface is an error.
+
+---
+
 ## [0.3.0] - 2026-05-17
 
 ### Changed
