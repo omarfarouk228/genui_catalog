@@ -5,7 +5,15 @@ class RatingInputWidget extends StatefulWidget {
   final int maxStars;
   final String? label;
   final bool allowHalf;
-  final void Function(String event) dispatchEvent;
+
+  /// Screen-reader value when nothing is selected.
+  final String noRatingLabel;
+
+  /// Screen-reader word between the rating and the maximum ("3 out of 5").
+  final String outOfLabel;
+
+  /// Called with `rating_submitted` and `{rating, maxStars}`.
+  final void Function(String event, Map<String, Object> context) dispatchEvent;
 
   const RatingInputWidget({
     super.key,
@@ -14,6 +22,8 @@ class RatingInputWidget extends StatefulWidget {
     this.label,
     required this.allowHalf,
     required this.dispatchEvent,
+    this.noRatingLabel = 'No rating',
+    this.outOfLabel = 'out of',
   });
 
   @override
@@ -24,11 +34,20 @@ class _RatingInputWidgetState extends State<RatingInputWidget> {
   double _rating = 0;
 
   void _onTap(int starIndex, bool isHalf) {
-    setState(() {
-      _rating = isHalf ? starIndex - 0.5 : starIndex.toDouble();
-    });
-    widget.dispatchEvent('rating_submitted');
+    _rate(isHalf ? starIndex - 0.5 : starIndex.toDouble());
   }
+
+  void _rate(double rating) {
+    setState(() => _rating = rating);
+    widget.dispatchEvent('rating_submitted', {
+      // 4 rather than 4.0 when half stars are off.
+      'rating': rating % 1 == 0 ? rating.toInt() : rating,
+      'maxStars': widget.maxStars,
+    });
+  }
+
+  String _describe(double rating) =>
+      '$rating ${widget.outOfLabel} ${widget.maxStars}';
 
   @override
   Widget build(BuildContext context) {
@@ -60,30 +79,38 @@ class _RatingInputWidgetState extends State<RatingInputWidget> {
             ],
             Semantics(
               slider: true,
-              value: _rating == 0
-                  ? 'No rating'
-                  : '$_rating out of ${widget.maxStars}',
+              value: _rating == 0 ? widget.noRatingLabel : _describe(_rating),
               increasedValue: _rating < widget.maxStars
-                  ? '${(_rating + (widget.allowHalf ? 0.5 : 1)).clamp(0, widget.maxStars.toDouble())} out of ${widget.maxStars}'
+                  ? _describe(
+                      (_rating + (widget.allowHalf ? 0.5 : 1)).clamp(
+                        0,
+                        widget.maxStars.toDouble(),
+                      ),
+                    )
                   : null,
               decreasedValue: _rating > 0
-                  ? '${(_rating - (widget.allowHalf ? 0.5 : 1)).clamp(0, widget.maxStars.toDouble())} out of ${widget.maxStars}'
+                  ? _describe(
+                      (_rating - (widget.allowHalf ? 0.5 : 1)).clamp(
+                        0,
+                        widget.maxStars.toDouble(),
+                      ),
+                    )
                   : null,
               onIncrease: _rating < widget.maxStars
-                  ? () {
-                      final next = (_rating + (widget.allowHalf ? 0.5 : 1))
-                          .clamp(0.0, widget.maxStars.toDouble());
-                      setState(() => _rating = next);
-                      widget.dispatchEvent('rating_submitted');
-                    }
+                  ? () => _rate(
+                      (_rating + (widget.allowHalf ? 0.5 : 1)).clamp(
+                        0.0,
+                        widget.maxStars.toDouble(),
+                      ),
+                    )
                   : null,
               onDecrease: _rating > 0
-                  ? () {
-                      final prev = (_rating - (widget.allowHalf ? 0.5 : 1))
-                          .clamp(0.0, widget.maxStars.toDouble());
-                      setState(() => _rating = prev);
-                      widget.dispatchEvent('rating_submitted');
-                    }
+                  ? () => _rate(
+                      (_rating - (widget.allowHalf ? 0.5 : 1)).clamp(
+                        0.0,
+                        widget.maxStars.toDouble(),
+                      ),
+                    )
                   : null,
               child: Row(
                 mainAxisSize: MainAxisSize.min,

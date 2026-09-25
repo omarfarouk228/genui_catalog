@@ -5,6 +5,10 @@ class CheckboxGroupWidget extends StatefulWidget {
   final List<Map<String, dynamic>> options;
   final List<String> initialValues;
   final String? event;
+
+  /// When set, checking a box stays local and this button dispatches the
+  /// selection once. When null, every change is dispatched immediately.
+  final String? submitLabel;
   final void Function(String event) dispatchEvent;
 
   const CheckboxGroupWidget({
@@ -13,6 +17,7 @@ class CheckboxGroupWidget extends StatefulWidget {
     required this.options,
     this.initialValues = const [],
     this.event,
+    this.submitLabel,
     required this.dispatchEvent,
   });
 
@@ -22,6 +27,10 @@ class CheckboxGroupWidget extends StatefulWidget {
 
 class _CheckboxGroupWidgetState extends State<CheckboxGroupWidget> {
   late final Set<String> _selected;
+  bool _sent = false;
+
+  bool get _submitMode =>
+      widget.submitLabel != null && widget.submitLabel!.isNotEmpty;
 
   @override
   void initState() {
@@ -36,11 +45,34 @@ class _CheckboxGroupWidgetState extends State<CheckboxGroupWidget> {
       } else {
         _selected.remove(value);
       }
+      _sent = false;
     });
+    if (!_submitMode) _dispatch();
+  }
+
+  void _submit() {
+    setState(() => _sent = true);
+    _dispatch();
+  }
+
+  void _dispatch() {
     if (widget.event != null && widget.event!.isNotEmpty) {
       widget.dispatchEvent('${widget.event}:${_selected.join(',')}');
     }
   }
+
+  /// Submit mode: one button sends the whole selection at once.
+  Widget _submitButton() => Padding(
+    padding: const EdgeInsets.only(top: 8),
+    child: SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        // Disabled once sent, until the selection changes again.
+        onPressed: _sent ? null : _submit,
+        child: Text(widget.submitLabel!),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +109,7 @@ class _CheckboxGroupWidgetState extends State<CheckboxGroupWidget> {
             ),
           );
         }),
+        if (_submitMode) _submitButton(),
       ],
     );
   }

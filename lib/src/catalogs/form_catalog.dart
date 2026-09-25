@@ -40,13 +40,16 @@ class FormCatalog {
     systemPromptFragments: [
       'Form components available: ${itemNames.join(', ')}. '
           'ActionForm: form with typed fields (text|email|number|textarea) and a submit button; '
-          'dispatches form_submit event. '
+          'dispatches form_submit event. Optional requiredErrorText ({label} placeholder). '
           'SearchBar: debounced search input; dispatches search_query event. '
-          'RatingInput: star rating 1–10, optional half-stars; dispatches rating_submitted event. '
+          'RatingInput: star rating 1-10, optional half-stars; dispatches rating_submitted '
+          'with {rating, maxStars}. '
           'SelectInput: dropdown for picking one value from a list of options; '
           'dispatches event:<value> on selection. '
           'CheckboxGroup: multi-select checkboxes; dispatches event:<comma-separated values>. '
-          'SwitchGroup: list of on/off toggles; dispatches event:<value>:<on|off> per toggle.',
+          'SwitchGroup: list of on/off toggles; dispatches event:<value>:<on|off> per toggle. '
+          'Set submitLabel on CheckboxGroup or SwitchGroup to dispatch the selection once, '
+          'from a button, as event:<comma-separated values>.',
     ],
   );
 }

@@ -19,7 +19,7 @@ A catalog of **17 high-level UI components** (plus `Column` / `Row` layout conta
 ```yaml
 dependencies:
   genui: ^0.10.3
-  genui_catalog: ^0.4.1
+  genui_catalog: ^0.5.0
 ```
 
 ---
@@ -86,13 +86,14 @@ controller.onSubmit.listen((message) {
 
     switch (action['name'] as String) {
       case CatalogEvents.formSubmit:      // 'form_submit' — field values in action['context']
-      case CatalogEvents.ratingSubmitted: // 'rating_submitted'
+      case CatalogEvents.ratingSubmitted: // 'rating_submitted', {rating, maxStars} in action['context']
       case CatalogEvents.searchQuery:     // 'search_query'
       case CatalogEvents.stepNext:        // 'next_step'
       case CatalogEvents.stepPrev:        // 'prev_step'
       // SelectInput dispatches '<event>:<value>'
       // CheckboxGroup dispatches '<event>:<csv_values>'
       // SwitchGroup dispatches '<event>:<value>:<on|off>'
+      //   (with submitLabel, both dispatch '<event>:<csv_values>' once)
     }
   }
 });
@@ -358,13 +359,15 @@ A colored chip conveying a status at a glance.
 
 #### StepperCard
 
-Guides the user through a multi-step process. Dispatches `CatalogEvents.stepNext` / `CatalogEvents.stepPrev`.
+Guides the user through a multi-step process. Dispatches `CatalogEvents.stepNext` / `CatalogEvents.stepPrev` from the navigation buttons. Tapping a step indicator shows that step without dispatching anything.
 
 ```json
 {
   "title": "Account setup",
-  "initialStep": 0,
+  "currentStep": 0,
   "showNavigation": true,
+  "previousLabel": "Previous",
+  "nextLabel": "Next",
   "steps": [
     { "title": "Profile", "description": "Fill in your details." },
     { "title": "Security", "description": "Set up 2FA." },
@@ -401,6 +404,8 @@ Renders a dynamic form and dispatches `CatalogEvents.formSubmit` with the submit
 
 `type` accepts `"text"` · `"email"` · `"number"` · `"textarea"`
 
+`requiredErrorText` (optional) is shown under an empty required field; `{label}` is replaced by the field label. Default: `"{label} is required"`.
+
 ---
 
 #### SearchBar
@@ -419,7 +424,7 @@ A debounced search input. Dispatches `CatalogEvents.searchQuery` once the user s
 
 #### RatingInput
 
-A tappable star rating with optional half-star support. Dispatches `CatalogEvents.ratingSubmitted` on selection. Also supports keyboard/accessibility increment and decrement.
+A tappable star rating with optional half-star support. Dispatches `CatalogEvents.ratingSubmitted` on selection, with `{"rating": 4, "maxStars": 5}` in the event context. Also supports keyboard/accessibility increment and decrement.
 
 ```json
 {
@@ -429,6 +434,8 @@ A tappable star rating with optional half-star support. Dispatches `CatalogEvent
   "allowHalf": false
 }
 ```
+
+`noRatingLabel` and `outOfLabel` (optional) translate what screen readers announce (defaults: `"No rating"`, `"3 out of 5"`).
 
 ---
 
@@ -455,7 +462,7 @@ Use `initialValue` to pre-select an option.
 
 #### CheckboxGroup
 
-A labeled list of checkboxes where the user can select multiple options. Dispatches `<event>:<comma-separated values>` on every change.
+A labeled list of checkboxes where the user can select multiple options. Dispatches `<event>:<comma-separated values>` on every change, or once from a button when `submitLabel` is set.
 
 ```json
 {
@@ -474,7 +481,7 @@ A labeled list of checkboxes where the user can select multiple options. Dispatc
 
 #### SwitchGroup
 
-A labeled list of on/off toggles. Dispatches `<event>:<value>:<on|off>` each time a switch is flipped.
+A labeled list of on/off toggles. Dispatches `<event>:<value>:<on|off>` each time a switch is flipped. With `submitLabel`, switches change locally and a button dispatches `<event>:<comma-separated values that are on>` once.
 
 ```json
 {

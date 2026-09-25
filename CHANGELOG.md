@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-09-25
+
+Fixes found while building [Lébénam Triage](https://github.com/omarfarouk228/lebenam_triage),
+a GenUI app that composes 16 of these components. Every new property is optional: existing
+apps and prompts keep working unchanged.
+
+### Added
+
+- **CheckboxGroup / SwitchGroup: `submitLabel`.** When set, checking or flipping stays local
+  and a button dispatches the selection once (`<event>:<comma-separated values>`). Without it,
+  every change still dispatches immediately. With an LLM behind the events, this turns one
+  model call per toggle into one per answer.
+- **Translatable labels** for text that was hard-coded in English:
+  `ActionForm.requiredErrorText` (`{label}` placeholder), `StepperCard.previousLabel` /
+  `nextLabel`, `RatingInput.noRatingLabel` / `outOfLabel` (screen readers).
+- **StepperCard:** tapping a step indicator shows that step. Local only: no event is dispatched.
+
+### Fixed
+
+- **RatingInput** now sends the rating: `rating_submitted` carries `{rating, maxStars}` in its
+  event context. It used to send the event name only, so the agent never knew the score.
+- **DataTable:** the table fills the width of its card (it hugged its columns) and still
+  scrolls horizontally when the columns need more room.
+- **README:** the StepperCard example used `initialStep`; the schema property is `currentStep`.
+
+---
+
 ## [0.4.1] - 2026-09-25
 
 ### Fixed

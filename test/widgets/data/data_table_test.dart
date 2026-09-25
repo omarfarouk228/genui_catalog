@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:genui_catalog/src/items/data/data_table_item.dart';
 import 'package:genui_catalog/src/widgets/data/data_table_widget.dart';
 import '../../helpers.dart';
@@ -114,6 +115,20 @@ void main() {
       );
       await tester.pumpWidget(wrap(dataTableItem.widgetBuilder(ctx)));
       expect(find.textContaining('Showing'), findsNothing);
+    });
+  });
+
+  group('DataTableWidget width', () {
+    testWidgets('the table fills the card width', (tester) async {
+      await tester.pumpWidget(
+        wrap(DataTableWidget(columns: columns, rows: const [])),
+      );
+      final screenWidth = tester.getSize(find.byType(Scaffold)).width;
+      final cardWidth = tester.getSize(find.byType(Card)).width;
+      final tableWidth = tester.getSize(find.byType(DataTable)).width;
+      // The card's size includes its default 4 px margin on each side.
+      expect(tableWidth, greaterThanOrEqualTo(cardWidth - 8));
+      expect(cardWidth, greaterThan(screenWidth / 2));
     });
   });
 }

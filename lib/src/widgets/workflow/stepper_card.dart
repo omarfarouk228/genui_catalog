@@ -5,6 +5,8 @@ class StepperCardWidget extends StatefulWidget {
   final List<Map<String, dynamic>> steps;
   final int initialStep;
   final bool showNavigation;
+  final String previousLabel;
+  final String nextLabel;
   final void Function(String event) dispatchEvent;
 
   const StepperCardWidget({
@@ -14,6 +16,8 @@ class StepperCardWidget extends StatefulWidget {
     required this.initialStep,
     required this.showNavigation,
     required this.dispatchEvent,
+    this.previousLabel = 'Previous',
+    this.nextLabel = 'Next',
   });
 
   @override
@@ -84,45 +88,55 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
                         Expanded(
                           child: Column(
                             children: [
+                              // Tapping a step shows its content. This is
+                              // local: no event is dispatched.
                               Semantics(
                                 label: '$stepTitle, $stepState',
-                                child: Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isCompleted
-                                        ? primary
-                                        : isActive
-                                        ? primary.withValues(alpha: 0.15)
-                                        : Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainerHighest,
-                                    border: isActive
-                                        ? Border.all(color: primary, width: 2)
-                                        : null,
-                                  ),
-                                  child: Center(
-                                    child: isCompleted
-                                        ? Icon(
-                                            Icons.check,
-                                            size: 16,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.onPrimary,
-                                          )
-                                        : Text(
-                                            '${index + 1}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                              color: isActive
-                                                  ? primary
-                                                  : Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
+                                button: true,
+                                onTap: () =>
+                                    setState(() => _currentStep = index),
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () =>
+                                      setState(() => _currentStep = index),
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isCompleted
+                                          ? primary
+                                          : isActive
+                                          ? primary.withValues(alpha: 0.15)
+                                          : Theme.of(context)
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                      border: isActive
+                                          ? Border.all(color: primary, width: 2)
+                                          : null,
+                                    ),
+                                    child: Center(
+                                      child: isCompleted
+                                          ? Icon(
+                                              Icons.check,
+                                              size: 16,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimary,
+                                            )
+                                          : Text(
+                                              '${index + 1}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13,
+                                                color: isActive
+                                                    ? primary
+                                                    : Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurfaceVariant,
+                                              ),
                                             ),
-                                          ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -171,12 +185,12 @@ class _StepperCardWidgetState extends State<StepperCardWidget> {
                   TextButton.icon(
                     onPressed: _currentStep > 0 ? _goPrev : null,
                     icon: const Icon(Icons.arrow_back, size: 16),
-                    label: const Text('Previous'),
+                    label: Text(widget.previousLabel),
                   ),
                   TextButton.icon(
                     onPressed: _currentStep < steps.length - 1 ? _goNext : null,
                     icon: const Icon(Icons.arrow_forward, size: 16),
-                    label: const Text('Next'),
+                    label: Text(widget.nextLabel),
                   ),
                 ],
               ),

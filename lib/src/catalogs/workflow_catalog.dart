@@ -32,8 +32,9 @@ class WorkflowCatalog {
       'Workflow components available: ${itemNames.join(', ')}. '
           'TimelineCard: ordered list of events with time/title/description/status (done|active|pending). '
           'StatusBadge: colored chip for success|warning|error|info|unknown status. '
-          'StepperCard: multi-step wizard with optional navigation buttons; '
-          'dispatches next_step and prev_step events.',
+          'StepperCard: multi-step wizard with optional navigation buttons '
+          '(previousLabel, nextLabel); dispatches next_step and prev_step events. '
+          'Tapping a step shows it without dispatching.',
     ],
   );
 }

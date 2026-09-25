@@ -107,4 +107,54 @@ void main() {
       expect(find.byType(CheckboxGroupWidget), findsOneWidget);
     });
   });
+
+  group('CheckboxGroupWidget submit mode', () {
+    testWidgets('dispatches once, on submit, with the whole selection', (
+      tester,
+    ) async {
+      final events = <String>[];
+      await tester.pumpWidget(
+        wrap(
+          CheckboxGroupWidget(
+            event: 'history',
+            submitLabel: 'Valider',
+            options: const [
+              {'value': 'diabetes', 'label': 'Diabète'},
+              {'value': 'asthma', 'label': 'Asthme'},
+            ],
+            dispatchEvent: events.add,
+          ),
+        ),
+      );
+      await tester.tap(find.text('Diabète'));
+      await tester.tap(find.text('Asthme'));
+      await tester.pump();
+      expect(events, isEmpty, reason: 'toggles stay local');
+
+      await tester.tap(find.text('Valider'));
+      await tester.pump();
+      expect(events, ['history:diabetes,asthma']);
+
+      // Disabled until the selection changes again.
+      await tester.tap(find.text('Valider'));
+      await tester.pump();
+      expect(events, hasLength(1));
+    });
+
+    testWidgets('item passes submitLabel through', (tester) async {
+      final ctx = createItemContext(
+        buildContext: await getContext(tester),
+        data: {
+          'event': 'x',
+          'submitLabel': 'Send',
+          'options': [
+            {'value': 'a'},
+          ],
+        },
+        type: 'CheckboxGroup',
+      );
+      await tester.pumpWidget(wrap(checkboxGroupItem.widgetBuilder(ctx)));
+      expect(find.text('Send'), findsOneWidget);
+    });
+  });
 }

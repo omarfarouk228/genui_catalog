@@ -20,6 +20,8 @@ final stepperCardItem = CatalogItem(
       ),
       'currentStep': S.integer(),
       'showNavigation': S.boolean(),
+      'previousLabel': S.string(),
+      'nextLabel': S.string(),
     },
     required: ['steps', 'currentStep'],
   ),
@@ -38,6 +40,8 @@ final stepperCardItem = CatalogItem(
       steps: steps,
       initialStep: currentStep,
       showNavigation: showNavigation,
+      previousLabel: data['previousLabel'] as String? ?? 'Previous',
+      nextLabel: data['nextLabel'] as String? ?? 'Next',
       dispatchEvent: (eventName) {
         itemContext.dispatchEvent(
           UserActionEvent(name: eventName, sourceComponentId: itemContext.id),

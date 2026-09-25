@@ -114,4 +114,41 @@ void main() {
       expect(find.byType(StepperCardWidget), findsOneWidget);
     });
   });
+
+  group('StepperCardWidget 0.5.0', () {
+    testWidgets('uses translated navigation labels', (tester) async {
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 0,
+            showNavigation: true,
+            previousLabel: 'Précédent',
+            nextLabel: 'Suivant',
+            dispatchEvent: (_) {},
+          ),
+        ),
+      );
+      expect(find.text('Précédent'), findsOneWidget);
+      expect(find.text('Suivant'), findsOneWidget);
+    });
+
+    testWidgets('tapping a step shows it without dispatching', (tester) async {
+      final events = <String>[];
+      await tester.pumpWidget(
+        wrap(
+          StepperCardWidget(
+            steps: steps,
+            initialStep: 0,
+            showNavigation: false,
+            dispatchEvent: events.add,
+          ),
+        ),
+      );
+      await tester.tap(find.text('3'));
+      await tester.pump();
+      expect(find.text('Finally this'), findsOneWidget);
+      expect(events, isEmpty);
+    });
+  });
 }

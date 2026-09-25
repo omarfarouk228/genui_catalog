@@ -116,4 +116,33 @@ void main() {
       expect(find.byType(SwitchGroupWidget), findsOneWidget);
     });
   });
+
+  group('SwitchGroupWidget submit mode', () {
+    testWidgets('dispatches once, on submit, with the values that are on', (
+      tester,
+    ) async {
+      final events = <String>[];
+      await tester.pumpWidget(
+        wrap(
+          SwitchGroupWidget(
+            event: 'consent',
+            submitLabel: 'Save',
+            initialValues: const ['sms'],
+            options: const [
+              {'value': 'email', 'label': 'Email'},
+              {'value': 'sms', 'label': 'SMS'},
+            ],
+            dispatchEvent: events.add,
+          ),
+        ),
+      );
+      await tester.tap(find.text('Email'));
+      await tester.pump();
+      expect(events, isEmpty, reason: 'toggles stay local');
+
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+      expect(events, ['consent:email,sms']);
+    });
+  });
 }

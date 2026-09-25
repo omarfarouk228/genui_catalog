@@ -9,6 +9,7 @@ final checkboxGroupItem = CatalogItem(
     properties: {
       'label': S.string(),
       'event': S.string(),
+      'submitLabel': S.string(),
       'initialValues': S.list(items: S.string()),
       'options': S.list(
         items: S.object(
@@ -32,6 +33,7 @@ final checkboxGroupItem = CatalogItem(
       event: data['event'] as String?,
       options: options,
       initialValues: initialValues,
+      submitLabel: data['submitLabel'] as String?,
       dispatchEvent: (eventName) {
         itemContext.dispatchEvent(
           UserActionEvent(name: eventName, sourceComponentId: itemContext.id),

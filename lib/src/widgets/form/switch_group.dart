@@ -5,6 +5,11 @@ class SwitchGroupWidget extends StatefulWidget {
   final List<Map<String, dynamic>> options;
   final List<String> initialValues;
   final String? event;
+
+  /// When set, flipping a switch stays local and this button dispatches
+  /// `<event>:<comma-separated values that are on>` once. When null, every
+  /// flip dispatches `<event>:<value>:<on|off>` immediately.
+  final String? submitLabel;
   final void Function(String event) dispatchEvent;
 
   const SwitchGroupWidget({
@@ -13,6 +18,7 @@ class SwitchGroupWidget extends StatefulWidget {
     required this.options,
     this.initialValues = const [],
     this.event,
+    this.submitLabel,
     required this.dispatchEvent,
   });
 
@@ -22,6 +28,12 @@ class SwitchGroupWidget extends StatefulWidget {
 
 class _SwitchGroupWidgetState extends State<SwitchGroupWidget> {
   late final Set<String> _enabled;
+  bool _sent = false;
+
+  bool get _submitMode =>
+      widget.submitLabel != null && widget.submitLabel!.isNotEmpty;
+
+  bool get _hasEvent => widget.event != null && widget.event!.isNotEmpty;
 
   @override
   void initState() {
@@ -36,11 +48,37 @@ class _SwitchGroupWidgetState extends State<SwitchGroupWidget> {
       } else {
         _enabled.remove(value);
       }
+      _sent = false;
     });
-    if (widget.event != null && widget.event!.isNotEmpty) {
+    if (!_submitMode && _hasEvent) {
       widget.dispatchEvent('${widget.event}:$value:${on ? 'on' : 'off'}');
     }
   }
+
+  void _submit() {
+    setState(() => _sent = true);
+    if (_hasEvent) {
+      // Keep the options' order, not the order they were switched on.
+      final on = [
+        for (final opt in widget.options)
+          if (_enabled.contains(opt['value'])) opt['value'] as String,
+      ];
+      widget.dispatchEvent('${widget.event}:${on.join(',')}');
+    }
+  }
+
+  /// Submit mode: one button sends the whole selection at once.
+  Widget _submitButton() => Padding(
+    padding: const EdgeInsets.only(top: 8),
+    child: SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        // Disabled once sent, until the selection changes again.
+        onPressed: _sent ? null : _submit,
+        child: Text(widget.submitLabel!),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +123,7 @@ class _SwitchGroupWidgetState extends State<SwitchGroupWidget> {
             ),
           );
         }),
+        if (_submitMode) _submitButton(),
       ],
     );
   }

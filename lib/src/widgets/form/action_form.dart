@@ -5,6 +5,10 @@ class ActionFormWidget extends StatefulWidget {
   final List<Map<String, dynamic>> fields;
   final String submitLabel;
   final String? successMessage;
+
+  /// Error shown under an empty required field; `{label}` is replaced by
+  /// the field label.
+  final String requiredErrorText;
   final void Function(String event, Map<String, String> values) dispatchEvent;
 
   const ActionFormWidget({
@@ -13,6 +17,7 @@ class ActionFormWidget extends StatefulWidget {
     required this.fields,
     required this.submitLabel,
     this.successMessage,
+    this.requiredErrorText = '{label} is required',
     required this.dispatchEvent,
   });
 
@@ -143,7 +148,10 @@ class _ActionFormWidgetState extends State<ActionFormWidget> {
                           ),
                           validator: required
                               ? (v) => (v == null || v.isEmpty)
-                                    ? '$label is required'
+                                    ? widget.requiredErrorText.replaceAll(
+                                        '{label}',
+                                        label,
+                                      )
                                     : null
                               : null,
                         ),

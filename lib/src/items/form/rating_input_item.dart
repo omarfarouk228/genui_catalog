@@ -11,6 +11,8 @@ final ratingInputItem = CatalogItem(
       'maxStars': S.integer(),
       'label': S.string(),
       'allowHalf': S.boolean(),
+      'noRatingLabel': S.string(),
+      'outOfLabel': S.string(),
     },
     required: [],
   ),
@@ -27,9 +29,15 @@ final ratingInputItem = CatalogItem(
       maxStars: maxStars,
       label: label,
       allowHalf: allowHalf,
-      dispatchEvent: (eventName) {
+      noRatingLabel: data['noRatingLabel'] as String? ?? 'No rating',
+      outOfLabel: data['outOfLabel'] as String? ?? 'out of',
+      dispatchEvent: (eventName, context) {
         itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+          UserActionEvent(
+            name: eventName,
+            sourceComponentId: itemContext.id,
+            context: context,
+          ),
         );
       },
     );

@@ -93,4 +93,24 @@ void main() {
       expect((events.first as UserActionEvent).name, equals('form_submit'));
     });
   });
+
+  group('ActionFormWidget translations', () {
+    testWidgets('uses requiredErrorText with the field label', (tester) async {
+      await tester.pumpWidget(
+        wrap(
+          ActionFormWidget(
+            fields: const [
+              {'key': 'name', 'label': 'Prénom', 'required': true},
+            ],
+            submitLabel: 'Envoyer',
+            requiredErrorText: '{label} est obligatoire',
+            dispatchEvent: (_, _) {},
+          ),
+        ),
+      );
+      await tester.tap(find.text('Envoyer'));
+      await tester.pump();
+      expect(find.text('Prénom est obligatoire'), findsOneWidget);
+    });
+  });
 }

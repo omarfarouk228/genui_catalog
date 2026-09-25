@@ -22,6 +22,7 @@ final actionFormItem = CatalogItem(
       ),
       'submitLabel': S.string(),
       'successMessage': S.string(),
+      'requiredErrorText': S.string(),
     },
     required: ['fields'],
   ),
@@ -40,6 +41,8 @@ final actionFormItem = CatalogItem(
       fields: fields,
       submitLabel: submitLabel,
       successMessage: successMessage,
+      requiredErrorText:
+          data['requiredErrorText'] as String? ?? '{label} is required',
       dispatchEvent: (eventName, values) {
         itemContext.dispatchEvent(
           UserActionEvent(

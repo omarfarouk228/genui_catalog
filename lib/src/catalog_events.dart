@@ -13,7 +13,8 @@ abstract final class CatalogEvents {
   /// Dispatched by [ActionFormWidget] when the form is submitted successfully.
   static const String formSubmit = 'form_submit';
 
-  /// Dispatched by [RatingInputWidget] when the user selects a rating.
+  /// Dispatched by [RatingInputWidget] when the user selects a rating, with
+  /// `{rating, maxStars}` in the event context.
   static const String ratingSubmitted = 'rating_submitted';
 
   /// Dispatched by [SearchBarWidget] when the query meets the minimum length

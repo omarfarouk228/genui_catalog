@@ -37,49 +37,62 @@ class DataTableWidget extends StatelessWidget {
             ),
           Semantics(
             label: title != null ? 'Table: $title' : 'Data table',
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingRowColor: WidgetStateProperty.all(
-                  Theme.of(context).colorScheme.surfaceContainerHighest,
-                ),
-                columns: columns.map((col) {
-                  final align = col['align'] as String? ?? 'left';
-                  return DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        col['label'] as String? ?? col['key'] as String? ?? '',
-                        textAlign: _parseTextAlign(align),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+            // The table is at least as wide as the card, and scrolls
+            // horizontally when its columns need more room.
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: constraints.hasBoundedWidth
+                        ? constraints.maxWidth
+                        : 0,
+                  ),
+                  child: DataTable(
+                    headingRowColor: WidgetStateProperty.all(
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
                     ),
-                  );
-                }).toList(),
-                rows: List.generate(rows.length, (index) {
-                  final row = rows[index];
-                  Color? rowColor;
-                  if (striped && index.isOdd) {
-                    rowColor = Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerLow;
-                  }
-                  return DataRow(
-                    color: rowColor != null
-                        ? WidgetStateProperty.all(rowColor)
-                        : null,
-                    cells: columns.map((col) {
-                      final key = col['key'] as String? ?? '';
+                    columns: columns.map((col) {
                       final align = col['align'] as String? ?? 'left';
-                      final cellValue = row[key];
-                      return DataCell(
-                        Text(
-                          cellValue?.toString() ?? '',
-                          textAlign: _parseTextAlign(align),
+                      return DataColumn(
+                        label: Expanded(
+                          child: Text(
+                            col['label'] as String? ??
+                                col['key'] as String? ??
+                                '',
+                            textAlign: _parseTextAlign(align),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       );
                     }).toList(),
-                  );
-                }),
+                    rows: List.generate(rows.length, (index) {
+                      final row = rows[index];
+                      Color? rowColor;
+                      if (striped && index.isOdd) {
+                        rowColor = Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow;
+                      }
+                      return DataRow(
+                        color: rowColor != null
+                            ? WidgetStateProperty.all(rowColor)
+                            : null,
+                        cells: columns.map((col) {
+                          final key = col['key'] as String? ?? '';
+                          final align = col['align'] as String? ?? 'left';
+                          final cellValue = row[key];
+                          return DataCell(
+                            Text(
+                              cellValue?.toString() ?? '',
+                              textAlign: _parseTextAlign(align),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }),
+                  ),
+                ),
               ),
             ),
           ),
