@@ -49,7 +49,9 @@ class FormsScreen extends StatelessWidget {
               'Weekly digest (subtitle: Every Monday morning), '
               'Product updates (subtitle: New features and improvements), '
               'Marketing emails (subtitle: Tips and offers). '
-              'Pre-enable Weekly digest.',
+              'Pre-enable Weekly digest. '
+              'Give the CheckboxGroup and the SwitchGroup a submitLabel "Save", '
+              'so each sends its selection once.',
         ),
         Preset(
           label: 'Privacy Settings',

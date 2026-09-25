@@ -543,7 +543,7 @@ const List<_ComponentInfo> _allComponents = [
   ),
   _ComponentInfo(
     name: 'StepperCard',
-    description: 'Multi-step process navigator',
+    description: 'Multi-step navigator, tappable steps',
     icon: Icons.stairs_outlined,
     color: _workflowColor,
     navIndex: 3,
@@ -564,7 +564,7 @@ const List<_ComponentInfo> _allComponents = [
   ),
   _ComponentInfo(
     name: 'RatingInput',
-    description: 'Star rating widget',
+    description: 'Star rating, sends the score',
     icon: Icons.star_half,
     color: _formColor,
     navIndex: 4,
@@ -578,14 +578,14 @@ const List<_ComponentInfo> _allComponents = [
   ),
   _ComponentInfo(
     name: 'CheckboxGroup',
-    description: 'Multi-select checkboxes',
+    description: 'Multi-select checkboxes, optional submit',
     icon: Icons.check_box_outlined,
     color: _formColor,
     navIndex: 4,
   ),
   _ComponentInfo(
     name: 'SwitchGroup',
-    description: 'List of on/off toggles',
+    description: 'On/off toggles, optional submit',
     icon: Icons.toggle_on_outlined,
     color: _formColor,
     navIndex: 4,

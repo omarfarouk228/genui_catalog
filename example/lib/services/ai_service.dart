@@ -333,15 +333,15 @@ DataTable     → tabular data with columns and rows
 ChartCard     → line / bar / pie chart (chartType required)
 TimelineCard  → vertical sequence of events with status (done/active/pending)
 StatusBadge   → colored status chip (success/warning/error/info/neutral)
-StepperCard   → multi-step process navigator with navigation buttons
+StepperCard   → multi-step process navigator with navigation buttons (previousLabel/nextLabel)
 ActionForm    → dynamic form with typed fields and a submit button
 SearchBar     → debounced search input
-RatingInput   → star rating picker
+RatingInput   → star rating picker; rating_submitted carries {rating, maxStars}
 ProfileCard   → person card with avatar, details, and action buttons
 MediaCard     → content card with image, tags, and action buttons
-SwitchGroup   → group of toggle switches with labels and subtitles
+SwitchGroup   → group of toggle switches with labels and subtitles (submitLabel = one Save button)
 SelectInput   → dropdown selection input with options
-CheckboxGroup → group of checkboxes with labels
+CheckboxGroup → group of checkboxes with labels (submitLabel = one submit button)
 
 CRITICAL JSON OUTPUT REQUIREMENTS:
 - Output EXACTLY TWO separate JSON objects, one per line
