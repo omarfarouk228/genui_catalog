@@ -1,11 +1,14 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/list_card.dart';
+import '../event_property.dart';
 
-final listCardItem = CatalogItem(
+final listCardItem = ComponentImplementation(
   name: 'ListCard',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'showDividers': S.boolean(),
@@ -16,28 +19,29 @@ final listCardItem = CatalogItem(
             'subtitle': S.string(),
             'icon': S.string(),
             'trailingText': S.string(),
-            'event': S.string(),
             'destructive': S.boolean(),
           },
+          patternProperties: eventPatternProperties,
           required: ['title'],
         ),
       ),
     },
     required: ['items'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawItems = data['items'] as List<dynamic>? ?? [];
+  builder: (context, node, props, buildChild) {
+    final rawItems = props.list('items');
     final items = rawItems.whereType<Map<String, dynamic>>().toList();
 
     return ListCardWidget(
-      key: ValueKey(itemContext.id),
-      title: data['title'] as String?,
-      showDividers: data['showDividers'] as bool? ?? true,
+      key: ValueKey(node.componentId),
+      title: props.string('title'),
+      showDividers: props.boolean('showDividers') ?? true,
       items: items,
       dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName},
+          }),
         );
       },
     );

@@ -1,11 +1,13 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/empty_state.dart';
 
-final emptyStateItem = CatalogItem(
+final emptyStateItem = ComponentImplementation(
   name: 'EmptyState',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'description': S.string(),
@@ -14,19 +16,19 @@ final emptyStateItem = CatalogItem(
       'actionEvent': S.string(),
     },
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-
+  builder: (context, node, props, buildChild) {
     return EmptyStateWidget(
-      key: ValueKey(itemContext.id),
-      title: data['title'] as String?,
-      description: data['description'] as String?,
-      iconName: data['icon'] as String?,
-      actionLabel: data['actionLabel'] as String?,
-      actionEvent: data['actionEvent'] as String?,
+      key: ValueKey(node.componentId),
+      title: props.string('title'),
+      description: props.string('description'),
+      iconName: props.string('icon'),
+      actionLabel: props.string('actionLabel'),
+      actionEvent: props.string('actionEvent'),
       dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName},
+          }),
         );
       },
     );

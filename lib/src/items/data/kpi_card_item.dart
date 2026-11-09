@@ -1,12 +1,12 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/kpi_card.dart';
 import '../../utils/color_utils.dart';
 
-final kpiCardItem = CatalogItem(
+final kpiCardItem = ComponentImplementation(
   name: 'KpiCard',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'value': S.string(),
@@ -17,20 +17,19 @@ final kpiCardItem = CatalogItem(
     },
     required: ['title', 'value'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String? ?? '';
-    final value = data['value'] as String? ?? '';
-    final subtitle = data['subtitle'] as String?;
-    final trend = data['trend'] as String?;
-    final trendValue = data['trendValue'] as String?;
-    final colorStr = data['color'] as String?;
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title') ?? '';
+    final value = props.string('value') ?? '';
+    final subtitle = props.string('subtitle');
+    final trend = props.string('trend');
+    final trendValue = props.string('trendValue');
+    final colorStr = props.string('color');
     final color = (colorStr != null && colorStr.isNotEmpty)
         ? parseHexColor(colorStr)
         : null;
 
     return KpiCardWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       value: value,
       subtitle: subtitle,

@@ -1,11 +1,13 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/workflow/stepper_card.dart';
 
-final stepperCardItem = CatalogItem(
+final stepperCardItem = ComponentImplementation(
   name: 'StepperCard',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'steps': S.list(
@@ -25,26 +27,27 @@ final stepperCardItem = CatalogItem(
     },
     required: ['steps', 'currentStep'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final currentStep = data['currentStep'] as int? ?? 0;
-    final showNavigation = data['showNavigation'] as bool? ?? false;
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title');
+    final currentStep = props.number('currentStep')?.toInt() ?? 0;
+    final showNavigation = props.boolean('showNavigation') ?? false;
 
-    final rawSteps = data['steps'] as List<dynamic>? ?? [];
+    final rawSteps = props.list('steps');
     final steps = rawSteps.whereType<Map<String, dynamic>>().toList();
 
     return StepperCardWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       steps: steps,
       initialStep: currentStep,
       showNavigation: showNavigation,
-      previousLabel: data['previousLabel'] as String? ?? 'Previous',
-      nextLabel: data['nextLabel'] as String? ?? 'Next',
+      previousLabel: props.string('previousLabel') ?? 'Previous',
+      nextLabel: props.string('nextLabel') ?? 'Next',
       dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName},
+          }),
         );
       },
     );

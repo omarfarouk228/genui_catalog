@@ -29,17 +29,16 @@ void main() {
 
   group('statRowItem', () {
     testWidgets('builds StatRowWidget', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      await pumpItem(
+        tester,
+        statRowItem,
         data: {
           'stats': [
             {'label': 'A', 'value': '1'},
             {'label': 'B', 'value': '2'},
           ],
         },
-        type: 'StatRow',
       );
-      await tester.pumpWidget(wrap(statRowItem.widgetBuilder(ctx)));
       expect(find.byType(StatRowWidget), findsOneWidget);
     });
   });

@@ -1,36 +1,29 @@
+import 'package:a2ui_core/a2ui_core.dart' show CommonSchemas;
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
-final columnItem = CatalogItem(
+final columnItem = ComponentImplementation(
   name: 'Column',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
-      'children': S.list(items: S.string()),
+      'children': CommonSchemas.childList,
       'spacing': S.number(),
       'mainAxisAlignment': S.string(),
       'crossAxisAlignment': S.string(),
     },
     required: ['children'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawChildren = data['children'] as List<dynamic>? ?? [];
-    final children = rawChildren.whereType<String>().map((id) {
-      try {
-        return itemContext.buildChild(id);
-      } catch (_) {
-        return const SizedBox.shrink();
-      }
-    }).toList();
+  builder: (context, node, props, buildChild) {
+    final children = props.children('children').map(buildChild).toList();
 
-    final double spacing = (data['spacing'] as num?)?.toDouble() ?? 0;
+    final double spacing = props.number('spacing') ?? 0;
     final mainAxisAlignment = _alignmentFromString(
-      data['mainAxisAlignment'] as String?,
+      props.string('mainAxisAlignment'),
       Axis.vertical,
     );
     final crossAxisAlignment = _crossAlignmentFromString(
-      data['crossAxisAlignment'] as String?,
+      props.string('crossAxisAlignment'),
     );
 
     return Column(
@@ -47,35 +40,27 @@ final columnItem = CatalogItem(
   },
 );
 
-final rowItem = CatalogItem(
+final rowItem = ComponentImplementation(
   name: 'Row',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
-      'children': S.list(items: S.string()),
+      'children': CommonSchemas.childList,
       'spacing': S.number(),
       'mainAxisAlignment': S.string(),
       'crossAxisAlignment': S.string(),
     },
     required: ['children'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawChildren = data['children'] as List<dynamic>? ?? [];
-    final children = rawChildren.whereType<String>().map((id) {
-      try {
-        return itemContext.buildChild(id);
-      } catch (_) {
-        return const SizedBox.shrink();
-      }
-    }).toList();
+  builder: (context, node, props, buildChild) {
+    final children = props.children('children').map(buildChild).toList();
 
-    final double spacing = (data['spacing'] as num?)?.toDouble() ?? 0;
+    final double spacing = props.number('spacing') ?? 0;
     final mainAxisAlignment = _alignmentFromString(
-      data['mainAxisAlignment'] as String?,
+      props.string('mainAxisAlignment'),
       Axis.horizontal,
     );
     final crossAxisAlignment = _crossAlignmentFromString(
-      data['crossAxisAlignment'] as String?,
+      props.string('crossAxisAlignment'),
     );
 
     return LayoutBuilder(

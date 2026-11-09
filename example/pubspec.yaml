@@ -9,7 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  genui: ^0.10.3
+  a2ui_agent: ^0.1.0
+  a2ui_core: ^0.5.0
+  a2ui_flutter: ^0.1.0
   url_launcher: ^6.3.2
   genui_catalog:
     path: ../

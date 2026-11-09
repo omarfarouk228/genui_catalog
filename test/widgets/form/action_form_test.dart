@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genui/genui.dart';
 import 'package:genui_catalog/src/items/form/action_form_item.dart';
 import 'package:genui_catalog/src/widgets/form/action_form.dart';
 import '../../helpers.dart';
@@ -72,25 +71,24 @@ void main() {
   });
 
   group('actionFormItem', () {
-    testWidgets('dispatches UserActionEvent on valid submit', (tester) async {
-      final events = <UiEvent>[];
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+    testWidgets('dispatches an action on valid submit', (tester) async {
+      final harness = await pumpItem(
+        tester,
+        actionFormItem,
         data: {
           'fields': [
             {'key': 'name', 'label': 'Name', 'type': 'text', 'required': true},
           ],
           'submitLabel': 'Send',
         },
-        onDispatch: events.add,
       );
-      await tester.pumpWidget(wrap(actionFormItem.widgetBuilder(ctx)));
       await tester.enterText(find.byType(TextFormField), 'Bob');
       await tester.tap(find.text('Send'));
       await tester.pumpAndSettle();
+      final events = harness.actions;
       expect(events, isNotEmpty);
-      expect(events.first, isA<UserActionEvent>());
-      expect((events.first as UserActionEvent).name, equals('form_submit'));
+      expect(events.first.name, equals('form_submit'));
+      expect(events.first.context, {'name': 'Bob'});
     });
   });
 

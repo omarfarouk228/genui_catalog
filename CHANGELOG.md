@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+Moves from `genui`, which will be deprecated, to the A2UI Dart SDKs. Apps register the catalogs
+with a `MessageProcessor` and render surfaces with `A2uiSurface` instead of genui's
+`SurfaceController` and `Surface`. The components keep their names, properties and events, and
+still speak A2UI v0.9.
+
+### Changed
+
+- **Breaking: requires `a2ui_core` `^0.5.0` and `a2ui_flutter` `^0.1.0`** instead of `genui`
+  `^0.10.3`.
+- **Breaking: items are `ComponentImplementation`s.** `kpiCardItem` and the other items, the
+  `items` of each sub-catalog, `GenUICatalog.allItems` and `GenUICatalog.findItem` use
+  `a2ui_flutter`'s `ComponentImplementation` instead of genui's `CatalogItem`.
+- **Breaking: catalogs are `CatalogImplementation`s.** `asCatalog()` and `GenUICatalog.all`
+  return `a2ui_flutter`'s `CatalogImplementation` instead of genui's `Catalog`. The text that
+  was in `systemPromptFragments` is now the catalog's `instructions`, which `a2ui_agent` adds to
+  the prompt it builds.
+- **Breaking: re-exports.** The package re-exports `Catalog` and `DataContext` from `a2ui_core`,
+  and `CatalogImplementation` and `ComponentImplementation` from `a2ui_flutter`, instead of
+  genui's `Catalog`, `CatalogItem` and `DataContext`.
+- **Breaking: events** arrive on `MessageProcessor.model.onAction` as `A2uiRendererAction`s
+  instead of as `ChatMessage`s on `SurfaceController.onSubmit`, with the same names and context.
+  Nothing sends them to the LLM unless your code does.
+- **Breaking: stricter payloads.** `a2ui_core` checks each component against its schema before it
+  renders it, and rejects a component with a missing required property, a value of the wrong
+  type, or a property the schema does not declare. genui still built such a component and
+  reported the error afterwards. `SelectInput`, `CheckboxGroup` and `SwitchGroup` still accept undeclared
+  properties.
+- **Example app** renders with `MessageProcessor` and `A2uiSurface`, and builds the Gemini prompt
+  and reads the replies with `a2ui_agent`. The prompt asks for the A2UI messages in one
+  `<a2ui-json>` block instead of two bare JSON lines.
+
+---
+
 ## [0.5.0] - 2026-09-25
 
 Fixes found while building [Lébénam Triage](https://github.com/omarfarouk228/lebenam_triage),

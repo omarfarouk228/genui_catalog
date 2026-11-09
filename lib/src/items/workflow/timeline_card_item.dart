@@ -1,11 +1,11 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/workflow/timeline_card.dart';
 
-final timelineCardItem = CatalogItem(
+final timelineCardItem = ComponentImplementation(
   name: 'TimelineCard',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'events': S.list(
@@ -22,14 +22,13 @@ final timelineCardItem = CatalogItem(
     },
     required: ['events'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final rawEvents = data['events'] as List<dynamic>? ?? [];
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title');
+    final rawEvents = props.list('events');
     final events = rawEvents.whereType<Map<String, dynamic>>().toList();
 
     return TimelineCardWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       events: events,
     );

@@ -1,3 +1,4 @@
+import 'package:a2ui_core/a2ui_core.dart' show A2uiValidationError;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui_catalog/src/items/data/kpi_card_item.dart';
 import 'package:genui_catalog/src/widgets/data/kpi_card.dart';
@@ -50,29 +51,27 @@ void main() {
 
   group('kpiCardItem', () {
     testWidgets('builds KpiCardWidget from item context', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      await pumpItem(
+        tester,
+        kpiCardItem,
         data: {
           'title': 'MRR',
           'value': '\$9,800',
           'trend': 'up',
           'trendValue': '+12%',
         },
-        type: 'KpiCard',
       );
-      await tester.pumpWidget(wrap(kpiCardItem.widgetBuilder(ctx)));
       expect(find.byType(KpiCardWidget), findsOneWidget);
       expect(find.text('MRR'), findsOneWidget);
     });
 
-    testWidgets('defaults gracefully with missing data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: <String, dynamic>{},
-        type: 'KpiCard',
+    testWidgets('rejects a card without its required title and value', (
+      tester,
+    ) async {
+      await expectLater(
+        pumpItem(tester, kpiCardItem),
+        throwsA(isA<A2uiValidationError>()),
       );
-      await tester.pumpWidget(wrap(kpiCardItem.widgetBuilder(ctx)));
-      expect(find.byType(KpiCardWidget), findsOneWidget);
     });
   });
 }

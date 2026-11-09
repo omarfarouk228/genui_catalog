@@ -76,13 +76,24 @@ void main() {
 
   group('profileCardItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'name': 'Eve'},
-        type: 'ProfileCard',
-      );
-      await tester.pumpWidget(wrap(profileCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, profileCardItem, data: {'name': 'Eve'});
       expect(find.byType(ProfileCardWidget), findsOneWidget);
+    });
+
+    testWidgets('dispatches the event of an action button', (tester) async {
+      final harness = await pumpItem(
+        tester,
+        profileCardItem,
+        data: {
+          'name': 'Eve',
+          'actions': [
+            {'label': 'Message', 'event': 'profile_message'},
+          ],
+        },
+      );
+      await tester.tap(find.text('Message'));
+      await tester.pump();
+      expect(harness.actions.single.name, 'profile_message');
     });
   });
 }

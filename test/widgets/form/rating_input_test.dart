@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genui/genui.dart';
 import 'package:genui_catalog/src/items/form/rating_input_item.dart';
 import 'package:genui_catalog/src/widgets/form/rating_input.dart';
 import '../../helpers.dart';
@@ -82,12 +81,11 @@ void main() {
 
   group('ratingInputItem', () {
     testWidgets('builds RatingInputWidget', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      await pumpItem(
+        tester,
+        ratingInputItem,
         data: {'maxStars': 5, 'allowHalf': false},
-        type: 'RatingInput',
       );
-      await tester.pumpWidget(wrap(ratingInputItem.widgetBuilder(ctx)));
       expect(find.byType(RatingInputWidget), findsOneWidget);
     });
   });
@@ -113,19 +111,16 @@ void main() {
     testWidgets('item forwards the rating in the event context', (
       tester,
     ) async {
-      final events = <UiEvent>[];
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      final harness = await pumpItem(
+        tester,
+        ratingInputItem,
         data: {'maxStars': 5, 'allowHalf': false},
-        type: 'RatingInput',
-        onDispatch: events.add,
       );
-      await tester.pumpWidget(wrap(ratingInputItem.widgetBuilder(ctx)));
       await tester.tap(find.byIcon(Icons.star_border).at(1));
       await tester.pump();
-      final event = events.single as UserActionEvent;
-      expect(event.name, 'rating_submitted');
-      expect(event.context, {'rating': 2, 'maxStars': 5});
+      final action = harness.actions.single;
+      expect(action.name, 'rating_submitted');
+      expect(action.context, {'rating': 2, 'maxStars': 5});
     });
 
     testWidgets('uses translated screen-reader labels', (tester) async {

@@ -1,11 +1,11 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/data_table_widget.dart';
 
-final dataTableItem = CatalogItem(
+final dataTableItem = ComponentImplementation(
   name: 'DataTable',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'columns': S.list(
@@ -23,21 +23,20 @@ final dataTableItem = CatalogItem(
     },
     required: ['columns', 'rows'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final striped = data['striped'] as bool? ?? false;
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title');
+    final striped = props.boolean('striped') ?? false;
 
-    final rawColumns = data['columns'] as List<dynamic>? ?? [];
+    final rawColumns = props.list('columns');
     final columns = rawColumns.whereType<Map<String, dynamic>>().toList();
 
-    final rawRows = data['rows'] as List<dynamic>? ?? [];
+    final rawRows = props.list('rows');
     final allRows = rawRows.whereType<Map<String, dynamic>>().toList();
     const rowLimit = 100;
     final rows = allRows.take(rowLimit).toList();
 
     return DataTableWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       columns: columns,
       rows: rows,

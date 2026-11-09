@@ -1,4 +1,4 @@
-import 'package:genui/genui.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import '../items/form/action_form_item.dart';
 import '../items/form/search_bar_item.dart';
 import '../items/form/rating_input_item.dart';
@@ -18,7 +18,7 @@ class FormCatalog {
   FormCatalog._();
 
   /// All items in the form catalog.
-  static List<CatalogItem> get items => [
+  static List<ComponentImplementation> get items => [
     actionFormItem,
     searchBarItem,
     ratingInputItem,
@@ -33,23 +33,22 @@ class FormCatalog {
   /// Catalog ID for form components in the GenUI Catalog.
   static const String catalogId = 'genui_catalog/form';
 
-  /// Returns a [Catalog] containing all form catalog items.
-  static Catalog asCatalog() => Catalog(
-    items,
-    catalogId: catalogId,
-    systemPromptFragments: [
-      'Form components available: ${itemNames.join(', ')}. '
-          'ActionForm: form with typed fields (text|email|number|textarea) and a submit button; '
-          'dispatches form_submit event. Optional requiredErrorText ({label} placeholder). '
-          'SearchBar: debounced search input; dispatches search_query event. '
-          'RatingInput: star rating 1-10, optional half-stars; dispatches rating_submitted '
-          'with {rating, maxStars}. '
-          'SelectInput: dropdown for picking one value from a list of options; '
-          'dispatches event:<value> on selection. '
-          'CheckboxGroup: multi-select checkboxes; dispatches event:<comma-separated values>. '
-          'SwitchGroup: list of on/off toggles; dispatches event:<value>:<on|off> per toggle. '
-          'Set submitLabel on CheckboxGroup or SwitchGroup to dispatch the selection once, '
-          'from a button, as event:<comma-separated values>.',
-    ],
+  /// Returns a [CatalogImplementation] containing all form catalog items.
+  static CatalogImplementation asCatalog() => CatalogImplementation(
+    id: catalogId,
+    components: items,
+    instructions:
+        'Form components available: ${itemNames.join(', ')}. '
+        'ActionForm: form with typed fields (text|email|number|textarea) and a submit button; '
+        'dispatches form_submit event. Optional requiredErrorText ({label} placeholder). '
+        'SearchBar: debounced search input; dispatches search_query event. '
+        'RatingInput: star rating 1-10, optional half-stars; dispatches rating_submitted '
+        'with {rating, maxStars}. '
+        'SelectInput: dropdown for picking one value from a list of options; '
+        'dispatches event:<value> on selection. '
+        'CheckboxGroup: multi-select checkboxes; dispatches event:<comma-separated values>. '
+        'SwitchGroup: list of on/off toggles; dispatches event:<value>:<on|off> per toggle. '
+        'Set submitLabel on CheckboxGroup or SwitchGroup to dispatch the selection once, '
+        'from a button, as event:<comma-separated values>.',
   );
 }

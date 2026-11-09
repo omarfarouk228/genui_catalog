@@ -1,11 +1,14 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/media/profile_card.dart';
+import '../event_property.dart';
 
-final profileCardItem = CatalogItem(
+final profileCardItem = ComponentImplementation(
   name: 'ProfileCard',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'name': S.string(),
       'role': S.string(),
@@ -18,35 +21,37 @@ final profileCardItem = CatalogItem(
       ),
       'actions': S.list(
         items: S.object(
-          properties: {'label': S.string(), 'event': S.string()},
+          properties: {'label': S.string()},
+          patternProperties: eventPatternProperties,
           required: ['label', 'event'],
         ),
       ),
     },
     required: ['name'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final name = data['name'] as String? ?? '';
-    final role = data['role'] as String?;
-    final avatarUrl = data['avatarUrl'] as String?;
+  builder: (context, node, props, buildChild) {
+    final name = props.string('name') ?? '';
+    final role = props.string('role');
+    final avatarUrl = props.string('avatarUrl');
 
-    final rawDetails = data['details'] as List<dynamic>? ?? [];
+    final rawDetails = props.list('details');
     final details = rawDetails.whereType<Map<String, dynamic>>().toList();
 
-    final rawActions = data['actions'] as List<dynamic>? ?? [];
+    final rawActions = props.list('actions');
     final actions = rawActions.whereType<Map<String, dynamic>>().toList();
 
     return ProfileCardWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       name: name,
       role: role,
       avatarUrl: avatarUrl,
       details: details,
       actions: actions,
       dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName},
+          }),
         );
       },
     );
