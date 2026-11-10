@@ -1,11 +1,11 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/chart_card.dart';
 
-final chartCardItem = CatalogItem(
+final chartCardItem = ComponentImplementation(
   name: 'ChartCard',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'chartType': S.string(),
@@ -24,22 +24,21 @@ final chartCardItem = CatalogItem(
     },
     required: ['title', 'chartType', 'datasets'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String? ?? '';
-    final chartType = data['chartType'] as String? ?? 'bar';
-    final showLegend = data['showLegend'] as bool? ?? false;
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title') ?? '';
+    final chartType = props.string('chartType') ?? 'bar';
+    final showLegend = props.boolean('showLegend') ?? false;
 
-    final rawDatasets = data['datasets'] as List<dynamic>? ?? [];
+    final rawDatasets = props.list('datasets');
     final allDatasets = rawDatasets.whereType<Map<String, dynamic>>().toList();
     const datasetLimit = 6;
     final datasets = allDatasets.take(datasetLimit).toList();
 
-    final rawXLabels = data['xLabels'] as List<dynamic>?;
+    final rawXLabels = props.value('xLabels') as List<dynamic>?;
     final xLabels = rawXLabels?.map((e) => e.toString()).toList();
 
     return ChartCardWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       chartType: chartType,
       datasets: datasets,

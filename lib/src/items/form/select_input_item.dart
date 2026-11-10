@@ -1,11 +1,13 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/form/select_input.dart';
 
-final selectInputItem = CatalogItem(
+final selectInputItem = ComponentImplementation(
   name: 'SelectInput',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'label': S.string(),
       'placeholder': S.string(),
@@ -20,21 +22,22 @@ final selectInputItem = CatalogItem(
     },
     required: ['options'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawOptions = data['options'] as List<dynamic>? ?? [];
+  builder: (context, node, props, buildChild) {
+    final rawOptions = props.list('options');
     final options = rawOptions.whereType<Map<String, dynamic>>().toList();
 
     return SelectInputWidget(
-      key: ValueKey(itemContext.id),
-      label: data['label'] as String?,
-      placeholder: data['placeholder'] as String?,
-      initialValue: data['initialValue'] as String?,
-      event: data['event'] as String?,
+      key: ValueKey(node.componentId),
+      label: props.string('label'),
+      placeholder: props.string('placeholder'),
+      initialValue: props.string('initialValue'),
+      event: props.string('event'),
       options: options,
       dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName},
+          }),
         );
       },
     );

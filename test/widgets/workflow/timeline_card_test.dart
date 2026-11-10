@@ -43,22 +43,12 @@ void main() {
 
   group('timelineCardItem', () {
     testWidgets('builds TimelineCardWidget', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'events': events},
-        type: 'TimelineCard',
-      );
-      await tester.pumpWidget(wrap(timelineCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, timelineCardItem, data: {'events': events});
       expect(find.byType(TimelineCardWidget), findsOneWidget);
     });
 
     testWidgets('handles empty events list', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'events': <dynamic>[]},
-        type: 'TimelineCard',
-      );
-      await tester.pumpWidget(wrap(timelineCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, timelineCardItem, data: {'events': <dynamic>[]});
       expect(find.byType(TimelineCardWidget), findsOneWidget);
     });
   });

@@ -1,11 +1,11 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/stat_row.dart';
 
-final statRowItem = CatalogItem(
+final statRowItem = ComponentImplementation(
   name: 'StatRow',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'stats': S.list(
         items: S.object(
@@ -21,11 +21,10 @@ final statRowItem = CatalogItem(
     },
     required: ['stats'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawStats = data['stats'] as List<dynamic>? ?? [];
+  builder: (context, node, props, buildChild) {
+    final rawStats = props.list('stats');
     final stats = rawStats.whereType<Map<String, dynamic>>().toList();
 
-    return StatRowWidget(key: ValueKey(itemContext.id), stats: stats);
+    return StatRowWidget(key: ValueKey(node.componentId), stats: stats);
   },
 );

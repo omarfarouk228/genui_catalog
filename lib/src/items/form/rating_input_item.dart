@@ -1,11 +1,13 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/form/rating_input.dart';
 
-final ratingInputItem = CatalogItem(
+final ratingInputItem = ComponentImplementation(
   name: 'RatingInput',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'maxStars': S.integer(),
@@ -16,28 +18,25 @@ final ratingInputItem = CatalogItem(
     },
     required: [],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final maxStars = data['maxStars'] as int? ?? 5;
-    final label = data['label'] as String?;
-    final allowHalf = data['allowHalf'] as bool? ?? false;
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title');
+    final maxStars = props.number('maxStars')?.toInt() ?? 5;
+    final label = props.string('label');
+    final allowHalf = props.boolean('allowHalf') ?? false;
 
     return RatingInputWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       maxStars: maxStars,
       label: label,
       allowHalf: allowHalf,
-      noRatingLabel: data['noRatingLabel'] as String? ?? 'No rating',
-      outOfLabel: data['outOfLabel'] as String? ?? 'out of',
-      dispatchEvent: (eventName, context) {
-        itemContext.dispatchEvent(
-          UserActionEvent(
-            name: eventName,
-            sourceComponentId: itemContext.id,
-            context: context,
-          ),
+      noRatingLabel: props.string('noRatingLabel') ?? 'No rating',
+      outOfLabel: props.string('outOfLabel') ?? 'out of',
+      dispatchEvent: (eventName, eventContext) {
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName, 'context': eventContext},
+          }),
         );
       },
     );

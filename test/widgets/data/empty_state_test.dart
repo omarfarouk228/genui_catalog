@@ -60,12 +60,7 @@ void main() {
 
   group('emptyStateItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'title': 'No results'},
-        type: 'EmptyState',
-      );
-      await tester.pumpWidget(wrap(emptyStateItem.widgetBuilder(ctx)));
+      await pumpItem(tester, emptyStateItem, data: {'title': 'No results'});
       expect(find.byType(EmptyStateWidget), findsOneWidget);
     });
   });

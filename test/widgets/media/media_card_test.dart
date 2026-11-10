@@ -72,13 +72,24 @@ void main() {
 
   group('mediaCardItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'title': 'Post'},
-        type: 'MediaCard',
-      );
-      await tester.pumpWidget(wrap(mediaCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, mediaCardItem, data: {'title': 'Post'});
       expect(find.byType(MediaCardWidget), findsOneWidget);
+    });
+
+    testWidgets('dispatches the event of an action button', (tester) async {
+      final harness = await pumpItem(
+        tester,
+        mediaCardItem,
+        data: {
+          'title': 'Post',
+          'actions': [
+            {'label': 'Share', 'event': 'media_share'},
+          ],
+        },
+      );
+      await tester.tap(find.text('Share'));
+      await tester.pump();
+      expect(harness.actions.single.name, 'media_share');
     });
   });
 }

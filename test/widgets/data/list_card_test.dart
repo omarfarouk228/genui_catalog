@@ -117,17 +117,32 @@ void main() {
 
   group('listCardItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      await pumpItem(
+        tester,
+        listCardItem,
         data: {
           'items': [
             {'title': 'Hello'},
           ],
         },
-        type: 'ListCard',
       );
-      await tester.pumpWidget(wrap(listCardItem.widgetBuilder(ctx)));
       expect(find.byType(ListCardWidget), findsOneWidget);
+      expect(find.text('Hello'), findsOneWidget);
+    });
+
+    testWidgets('dispatches the event of the tapped item', (tester) async {
+      final harness = await pumpItem(
+        tester,
+        listCardItem,
+        data: {
+          'items': [
+            {'title': 'Share', 'event': 'share'},
+          ],
+        },
+      );
+      await tester.tap(find.text('Share'));
+      await tester.pump();
+      expect(harness.actions.single.name, 'share');
     });
   });
 }

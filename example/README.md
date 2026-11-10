@@ -73,7 +73,9 @@ lib/
 
 | Package | Purpose |
 |---|---|
-| `genui` | Core SDK — `SurfaceController`, `CatalogItem`, event dispatch |
+| `a2ui_core` | A2UI protocol — `MessageProcessor`, surfaces, actions |
+| `a2ui_flutter` | Renders surfaces with `A2uiSurface` |
+| `a2ui_agent` | Builds the Gemini prompt and reads the A2UI messages in its replies |
 | `genui_catalog` | The component catalog being demonstrated |
 | `google_generative_ai` | Gemini API client |
 | `url_launcher` | pub.dev and GitHub links |

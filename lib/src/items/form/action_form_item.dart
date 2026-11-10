@@ -1,11 +1,13 @@
+import 'dart:async';
+
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/form/action_form.dart';
 
-final actionFormItem = CatalogItem(
+final actionFormItem = ComponentImplementation(
   name: 'ActionForm',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'title': S.string(),
       'fields': S.list(
@@ -26,30 +28,27 @@ final actionFormItem = CatalogItem(
     },
     required: ['fields'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final submitLabel = data['submitLabel'] as String? ?? 'Submit';
-    final successMessage = data['successMessage'] as String?;
+  builder: (context, node, props, buildChild) {
+    final title = props.string('title');
+    final submitLabel = props.string('submitLabel') ?? 'Submit';
+    final successMessage = props.string('successMessage');
 
-    final rawFields = data['fields'] as List<dynamic>? ?? [];
+    final rawFields = props.list('fields');
     final fields = rawFields.whereType<Map<String, dynamic>>().toList();
 
     return ActionFormWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       title: title,
       fields: fields,
       submitLabel: submitLabel,
       successMessage: successMessage,
       requiredErrorText:
-          data['requiredErrorText'] as String? ?? '{label} is required',
+          props.string('requiredErrorText') ?? '{label} is required',
       dispatchEvent: (eventName, values) {
-        itemContext.dispatchEvent(
-          UserActionEvent(
-            name: eventName,
-            sourceComponentId: itemContext.id,
-            context: values.map((k, v) => MapEntry(k, v as Object)),
-          ),
+        unawaited(
+          node.context?.dispatchAction({
+            'event': {'name': eventName, 'context': values},
+          }),
         );
       },
     );

@@ -1,11 +1,11 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/workflow/status_badge.dart';
 
-final statusBadgeItem = CatalogItem(
+final statusBadgeItem = ComponentImplementation(
   name: 'StatusBadge',
-  dataSchema: S.object(
+  schema: S.object(
     properties: {
       'label': S.string(),
       'status': S.string(),
@@ -13,14 +13,13 @@ final statusBadgeItem = CatalogItem(
     },
     required: ['label', 'status'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final label = data['label'] as String? ?? '';
-    final status = data['status'] as String? ?? 'neutral';
-    final description = data['description'] as String?;
+  builder: (context, node, props, buildChild) {
+    final label = props.string('label') ?? '';
+    final status = props.string('status') ?? 'neutral';
+    final description = props.string('description');
 
     return StatusBadgeWidget(
-      key: ValueKey(itemContext.id),
+      key: ValueKey(node.componentId),
       label: label,
       status: status,
       description: description,

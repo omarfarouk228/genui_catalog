@@ -94,17 +94,32 @@ void main() {
 
   group('checkboxGroupItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      await pumpItem(
+        tester,
+        checkboxGroupItem,
         data: {
           'options': [
             {'value': 'x', 'label': 'X'},
           ],
         },
-        type: 'CheckboxGroup',
       );
-      await tester.pumpWidget(wrap(checkboxGroupItem.widgetBuilder(ctx)));
       expect(find.byType(CheckboxGroupWidget), findsOneWidget);
+    });
+
+    testWidgets('dispatches the selection as an action', (tester) async {
+      final harness = await pumpItem(
+        tester,
+        checkboxGroupItem,
+        data: {
+          'event': 'prefs',
+          'options': [
+            {'value': 'email', 'label': 'Email'},
+          ],
+        },
+      );
+      await tester.tap(find.text('Email'));
+      await tester.pump();
+      expect(harness.actions.single.name, 'prefs:email');
     });
   });
 
@@ -142,8 +157,9 @@ void main() {
     });
 
     testWidgets('item passes submitLabel through', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
+      await pumpItem(
+        tester,
+        checkboxGroupItem,
         data: {
           'event': 'x',
           'submitLabel': 'Send',
@@ -151,9 +167,7 @@ void main() {
             {'value': 'a'},
           ],
         },
-        type: 'CheckboxGroup',
       );
-      await tester.pumpWidget(wrap(checkboxGroupItem.widgetBuilder(ctx)));
       expect(find.text('Send'), findsOneWidget);
     });
   });

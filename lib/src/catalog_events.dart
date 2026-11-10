@@ -1,12 +1,12 @@
 /// Typed constants for all events dispatched by GenUI Catalog widgets.
 ///
-/// Use these instead of raw strings when matching the `name` of a
-/// `UserActionEvent`, e.g. the `action` decoded from the `ChatMessage`s
-/// emitted on `SurfaceController.onSubmit` (see the README).
+/// Use these instead of raw strings when matching the `name` of an
+/// `A2uiRendererAction`, e.g. the actions emitted on
+/// `MessageProcessor.model.onAction` (see the README).
 ///
 /// Example:
 /// ```dart
-/// if (action['name'] == CatalogEvents.formSubmit) { ... }
+/// if (action.name == CatalogEvents.formSubmit) { ... }
 /// ```
 abstract final class CatalogEvents {
   // Form
