@@ -4,13 +4,13 @@ import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/form/checkbox_group.dart';
-import '../event_property.dart';
 
 final checkboxGroupItem = ComponentImplementation(
   name: 'CheckboxGroup',
   schema: S.object(
     properties: {
       'label': S.string(),
+      'event': S.string(),
       'submitLabel': S.string(),
       'initialValues': S.list(items: S.string()),
       'options': S.list(
@@ -20,8 +20,6 @@ final checkboxGroupItem = ComponentImplementation(
         ),
       ),
     },
-    patternProperties: eventPatternProperties,
-    additionalProperties: true,
     required: ['options'],
   ),
   builder: (context, node, props, buildChild) {

@@ -4,7 +4,6 @@ import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/data/list_card.dart';
-import '../event_property.dart';
 
 final listCardItem = ComponentImplementation(
   name: 'ListCard',
@@ -19,9 +18,9 @@ final listCardItem = ComponentImplementation(
             'subtitle': S.string(),
             'icon': S.string(),
             'trailingText': S.string(),
+            'event': S.string(),
             'destructive': S.boolean(),
           },
-          patternProperties: eventPatternProperties,
           required: ['title'],
         ),
       ),

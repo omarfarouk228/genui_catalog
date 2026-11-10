@@ -4,7 +4,6 @@ import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/media/profile_card.dart';
-import '../event_property.dart';
 
 final profileCardItem = ComponentImplementation(
   name: 'ProfileCard',
@@ -21,8 +20,7 @@ final profileCardItem = ComponentImplementation(
       ),
       'actions': S.list(
         items: S.object(
-          properties: {'label': S.string()},
-          patternProperties: eventPatternProperties,
+          properties: {'label': S.string(), 'event': S.string()},
           required: ['label', 'event'],
         ),
       ),

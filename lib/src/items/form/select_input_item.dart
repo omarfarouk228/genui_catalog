@@ -4,7 +4,6 @@ import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../../widgets/form/select_input.dart';
-import '../event_property.dart';
 
 final selectInputItem = ComponentImplementation(
   name: 'SelectInput',
@@ -13,6 +12,7 @@ final selectInputItem = ComponentImplementation(
       'label': S.string(),
       'placeholder': S.string(),
       'initialValue': S.string(),
+      'event': S.string(),
       'options': S.list(
         items: S.object(
           properties: {'value': S.string(), 'label': S.string()},
@@ -20,8 +20,6 @@ final selectInputItem = ComponentImplementation(
         ),
       ),
     },
-    patternProperties: eventPatternProperties,
-    additionalProperties: true,
     required: ['options'],
   ),
   builder: (context, node, props, buildChild) {

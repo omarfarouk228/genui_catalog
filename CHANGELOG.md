@@ -14,7 +14,7 @@ still speak A2UI v0.9.
 
 ### Changed
 
-- **Breaking: requires `a2ui_core` `^0.5.0` and `a2ui_flutter` `^0.1.0`** instead of `genui`
+- **Breaking: requires `a2ui_core` `^0.6.0` and `a2ui_flutter` `^0.2.0`** instead of `genui`
   `^0.10.3`.
 - **Breaking: items are `ComponentImplementation`s.** `kpiCardItem` and the other items, the
   `items` of each sub-catalog, `GenUICatalog.allItems` and `GenUICatalog.findItem` use

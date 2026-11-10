@@ -10,7 +10,7 @@
 
 A catalog of **17 high-level UI components** (plus `Column` / `Row` layout containers) built on top of the A2UI Flutter SDK, [`a2ui_flutter`](https://pub.dev/packages/a2ui_flutter). Each component ships with its JSON schema, widget binding, event handling, dark/light mode support, and screen-reader semantics — ready to drop into any app that renders A2UI v0.9.
 
-> **Requires** [`a2ui_core`](https://pub.dev/packages/a2ui_core) `^0.5.0` and [`a2ui_flutter`](https://pub.dev/packages/a2ui_flutter) `^0.1.0`
+> **Requires** [`a2ui_core`](https://pub.dev/packages/a2ui_core) `^0.6.0` and [`a2ui_flutter`](https://pub.dev/packages/a2ui_flutter) `^0.2.0`
 
 ---
 
@@ -18,9 +18,9 @@ A catalog of **17 high-level UI components** (plus `Column` / `Row` layout conta
 
 ```yaml
 dependencies:
-  a2ui_agent: ^0.1.0 # only to build the LLM prompt, as below
-  a2ui_core: ^0.5.0
-  a2ui_flutter: ^0.1.0
+  a2ui_agent: ^0.2.0 # only to build the LLM prompt, as below
+  a2ui_core: ^0.6.0
+  a2ui_flutter: ^0.2.0
   genui_catalog: ^0.5.0
 ```
 
