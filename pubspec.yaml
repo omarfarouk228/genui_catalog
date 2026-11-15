@@ -1,16 +1,17 @@
 name: genui_catalog
-description: "Ready-to-use GenUI CatalogItems for building dynamic AI-generated UIs."
-version: 0.5.0
+description: "Ready-to-use A2UI components for a2ui_flutter: KPI cards, charts, tables, forms, timelines and more for AI-generated UIs."
+version: 0.6.0
 homepage: https://github.com/omarfarouk228/genui_catalog
 
 environment:
   sdk: ^3.11.4
-  flutter: ">=1.17.0"
+  flutter: ">=3.38.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  genui: ^0.10.3
+  a2ui_core: ^0.7.0
+  a2ui_flutter: ^0.3.0
   json_schema_builder: ^0.1.7
   fl_chart: ^1.2.0
   intl: ^0.20.2

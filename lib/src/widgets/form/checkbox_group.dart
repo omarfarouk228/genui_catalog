@@ -11,6 +11,9 @@ class CheckboxGroupWidget extends StatefulWidget {
   final String? submitLabel;
   final void Function(String event) dispatchEvent;
 
+  /// Called with the checked values on every change, in both modes.
+  final void Function(List<String> values)? onChanged;
+
   const CheckboxGroupWidget({
     super.key,
     this.label,
@@ -19,6 +22,7 @@ class CheckboxGroupWidget extends StatefulWidget {
     this.event,
     this.submitLabel,
     required this.dispatchEvent,
+    this.onChanged,
   });
 
   @override
@@ -47,6 +51,7 @@ class _CheckboxGroupWidgetState extends State<CheckboxGroupWidget> {
       }
       _sent = false;
     });
+    widget.onChanged?.call(_selected.toList());
     if (!_submitMode) _dispatch();
   }
 

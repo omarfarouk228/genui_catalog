@@ -1,88 +1,67 @@
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
 
-final columnItem = CatalogItem(
+import '../../utils/a2ui_helpers.dart';
+
+Schema _flexSchema() => Schema.object(
+  properties: {
+    'children': CatalogSchemas.childList,
+    'spacing': Schema.number(),
+    'mainAxisAlignment': Schema.string(),
+    'crossAxisAlignment': Schema.string(),
+  },
+  required: ['children'],
+);
+
+List<Widget> _children(ComponentProps props, ChildWidgetBuilder buildChild) => [
+  for (final child in props.children('children'))
+    KeyedSubtree(key: NodeKey(child.instanceId), child: buildChild(child)),
+];
+
+final columnItem = ComponentImplementation(
   name: 'Column',
-  dataSchema: S.object(
-    properties: {
-      'children': S.list(items: S.string()),
-      'spacing': S.number(),
-      'mainAxisAlignment': S.string(),
-      'crossAxisAlignment': S.string(),
-    },
-    required: ['children'],
-  ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawChildren = data['children'] as List<dynamic>? ?? [];
-    final children = rawChildren.whereType<String>().map((id) {
-      try {
-        return itemContext.buildChild(id);
-      } catch (_) {
-        return const SizedBox.shrink();
-      }
-    }).toList();
-
-    final double spacing = (data['spacing'] as num?)?.toDouble() ?? 0;
-    final mainAxisAlignment = _alignmentFromString(
-      data['mainAxisAlignment'] as String?,
-      Axis.vertical,
-    );
-    final crossAxisAlignment = _crossAlignmentFromString(
-      data['crossAxisAlignment'] as String?,
-    );
+  schema: _flexSchema(),
+  builder: (_, _, props, buildChild) {
+    final children = _children(props, buildChild);
+    final double spacing = props.number('spacing') ?? 0;
 
     return Column(
-      crossAxisAlignment: crossAxisAlignment,
-      mainAxisAlignment: mainAxisAlignment,
-      children:
-          spacing <= 0
-                ? children
-                : children
-                      .expand((child) => [child, SizedBox(height: spacing)])
-                      .toList()
-            ..removeLast(),
+      crossAxisAlignment: _crossAlignmentFromString(
+        props.string('crossAxisAlignment'),
+      ),
+      mainAxisAlignment: _alignmentFromString(
+        props.string('mainAxisAlignment'),
+        Axis.vertical,
+      ),
+      children: [
+        for (var i = 0; i < children.length; i++) ...[
+          if (i > 0 && spacing > 0) SizedBox(height: spacing),
+          children[i],
+        ],
+      ],
     );
   },
 );
 
-final rowItem = CatalogItem(
+final rowItem = ComponentImplementation(
   name: 'Row',
-  dataSchema: S.object(
-    properties: {
-      'children': S.list(items: S.string()),
-      'spacing': S.number(),
-      'mainAxisAlignment': S.string(),
-      'crossAxisAlignment': S.string(),
-    },
-    required: ['children'],
-  ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawChildren = data['children'] as List<dynamic>? ?? [];
-    final children = rawChildren.whereType<String>().map((id) {
-      try {
-        return itemContext.buildChild(id);
-      } catch (_) {
-        return const SizedBox.shrink();
-      }
-    }).toList();
-
-    final double spacing = (data['spacing'] as num?)?.toDouble() ?? 0;
+  schema: _flexSchema(),
+  builder: (_, _, props, buildChild) {
+    final children = _children(props, buildChild);
+    final double spacing = props.number('spacing') ?? 0;
     final mainAxisAlignment = _alignmentFromString(
-      data['mainAxisAlignment'] as String?,
+      props.string('mainAxisAlignment'),
       Axis.horizontal,
     );
     final crossAxisAlignment = _crossAlignmentFromString(
-      data['crossAxisAlignment'] as String?,
+      props.string('crossAxisAlignment'),
     );
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final useWrap = constraints.maxWidth.isFinite;
-
-        if (useWrap) {
+        if (constraints.maxWidth.isFinite) {
           return Wrap(
             direction: Axis.horizontal,
             spacing: spacing,

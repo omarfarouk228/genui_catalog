@@ -1,23 +1,26 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/data/list_card.dart';
 
-final listCardItem = CatalogItem(
+/// Each item's `event` is sent as-is when the item is tapped.
+final listCardItem = ComponentImplementation(
   name: 'ListCard',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'showDividers': S.boolean(),
-      'items': S.list(
-        items: S.object(
+      'title': CatalogSchemas.text,
+      'showDividers': Schema.boolean(),
+      'items': Schema.list(
+        items: Schema.object(
           properties: {
-            'title': S.string(),
-            'subtitle': S.string(),
-            'icon': S.string(),
-            'trailingText': S.string(),
-            'event': S.string(),
-            'destructive': S.boolean(),
+            'title': Schema.string(),
+            'subtitle': Schema.string(),
+            'icon': Schema.string(),
+            'trailingText': Schema.string(),
+            'event': Schema.string(),
+            'destructive': Schema.boolean(),
           },
           required: ['title'],
         ),
@@ -25,21 +28,11 @@ final listCardItem = CatalogItem(
     },
     required: ['items'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawItems = data['items'] as List<dynamic>? ?? [];
-    final items = rawItems.whereType<Map<String, dynamic>>().toList();
-
-    return ListCardWidget(
-      key: ValueKey(itemContext.id),
-      title: data['title'] as String?,
-      showDividers: data['showDividers'] as bool? ?? true,
-      items: items,
-      dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => ListCardWidget(
+    title: props.string('title'),
+    showDividers: props.boolean('showDividers') ?? true,
+    items: props.objects('items'),
+    dispatchEvent: (eventName) =>
+        dispatchCatalogEvent(node, props, eventName, actionKey: null),
+  ),
 );

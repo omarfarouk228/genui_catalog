@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genui/genui.dart';
 import 'package:genui_catalog/src/items/form/action_form_item.dart';
 import 'package:genui_catalog/src/widgets/form/action_form.dart';
 import '../../helpers.dart';
@@ -72,25 +71,80 @@ void main() {
   });
 
   group('actionFormItem', () {
-    testWidgets('dispatches UserActionEvent on valid submit', (tester) async {
-      final events = <UiEvent>[];
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'fields': [
-            {'key': 'name', 'label': 'Name', 'type': 'text', 'required': true},
-          ],
-          'submitLabel': 'Send',
-        },
-        onDispatch: events.add,
-      );
-      await tester.pumpWidget(wrap(actionFormItem.widgetBuilder(ctx)));
+    final fields = [
+      {'key': 'name', 'label': 'Name', 'type': 'text', 'required': true},
+    ];
+
+    Future<A2uiHarness> submitBob(
+      WidgetTester tester,
+      Map<String, Object?> props, {
+      Map<String, Object?>? dataModel,
+    }) async {
+      final harness = await pumpItem(tester, actionFormItem, {
+        'fields': fields,
+        'submitLabel': 'Send',
+        ...props,
+      }, dataModel: dataModel);
       await tester.enterText(find.byType(TextFormField), 'Bob');
       await tester.tap(find.text('Send'));
       await tester.pumpAndSettle();
-      expect(events, isNotEmpty);
-      expect(events.first, isA<UserActionEvent>());
-      expect((events.first as UserActionEvent).name, equals('form_submit'));
+      return harness;
+    }
+
+    testWidgets('sends form_submit with the values on valid submit', (
+      tester,
+    ) async {
+      final harness = await submitBob(tester, {});
+      final action = harness.actions.single;
+      expect(action.name, 'form_submit');
+      expect(action.context, {'name': 'Bob'});
+      expect(harness.errors, isEmpty);
+    });
+
+    testWidgets('does not send anything when a required field is empty', (
+      tester,
+    ) async {
+      final harness = await pumpItem(tester, actionFormItem, {
+        'fields': fields,
+        'submitLabel': 'Send',
+      });
+      await tester.tap(find.text('Send'));
+      await tester.pumpAndSettle();
+      expect(harness.actions, isEmpty);
+    });
+
+    testWidgets('writes the values to the bound path', (tester) async {
+      final harness = await submitBob(
+        tester,
+        {
+          'values': {'@path': '/contact'},
+        },
+        dataModel: {'contact': <String, Object?>{}},
+      );
+      expect(harness.data('/contact'), {'name': 'Bob'});
+    });
+
+    testWidgets('runs the declared action instead of form_submit', (
+      tester,
+    ) async {
+      final harness = await submitBob(
+        tester,
+        {
+          'values': {'@path': '/contact'},
+          'action': {
+            'event': {
+              'name': 'contact_saved',
+              'context': {
+                'who': {'@path': '/contact/name'},
+              },
+            },
+          },
+        },
+        dataModel: {'contact': <String, Object?>{}},
+      );
+      final action = harness.actions.single;
+      expect(action.name, 'contact_saved');
+      expect(action.context, {'who': 'Bob'});
     });
   });
 

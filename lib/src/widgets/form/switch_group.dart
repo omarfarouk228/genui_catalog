@@ -12,6 +12,10 @@ class SwitchGroupWidget extends StatefulWidget {
   final String? submitLabel;
   final void Function(String event) dispatchEvent;
 
+  /// Called with the values that are on, in the options' order, on every
+  /// flip, in both modes.
+  final void Function(List<String> values)? onChanged;
+
   const SwitchGroupWidget({
     super.key,
     this.label,
@@ -20,6 +24,7 @@ class SwitchGroupWidget extends StatefulWidget {
     this.event,
     this.submitLabel,
     required this.dispatchEvent,
+    this.onChanged,
   });
 
   @override
@@ -50,6 +55,7 @@ class _SwitchGroupWidgetState extends State<SwitchGroupWidget> {
       }
       _sent = false;
     });
+    widget.onChanged?.call(_enabledInOrder());
     if (!_submitMode && _hasEvent) {
       widget.dispatchEvent('${widget.event}:$value:${on ? 'on' : 'off'}');
     }
@@ -58,14 +64,16 @@ class _SwitchGroupWidgetState extends State<SwitchGroupWidget> {
   void _submit() {
     setState(() => _sent = true);
     if (_hasEvent) {
-      // Keep the options' order, not the order they were switched on.
-      final on = [
-        for (final opt in widget.options)
-          if (_enabled.contains(opt['value'])) opt['value'] as String,
-      ];
-      widget.dispatchEvent('${widget.event}:${on.join(',')}');
+      widget.dispatchEvent('${widget.event}:${_enabledInOrder().join(',')}');
     }
   }
+
+  /// The values that are on, in the options' order rather than the order they
+  /// were switched on.
+  List<String> _enabledInOrder() => [
+    for (final opt in widget.options)
+      if (_enabled.contains(opt['value'])) opt['value'] as String,
+  ];
 
   /// Submit mode: one button sends the whole selection at once.
   Widget _submitButton() => Padding(

@@ -1,19 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/data/stat_row.dart';
 
-final statRowItem = CatalogItem(
+final statRowItem = ComponentImplementation(
   name: 'StatRow',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'stats': S.list(
-        items: S.object(
+      'stats': Schema.list(
+        items: Schema.object(
           properties: {
-            'label': S.string(),
-            'value': S.string(),
-            'icon': S.string(),
-            'color': S.string(),
+            'label': Schema.string(),
+            'value': Schema.string(),
+            'icon': Schema.string(),
+            'color': Schema.string(),
           },
           required: ['label', 'value'],
         ),
@@ -21,11 +23,5 @@ final statRowItem = CatalogItem(
     },
     required: ['stats'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawStats = data['stats'] as List<dynamic>? ?? [];
-    final stats = rawStats.whereType<Map<String, dynamic>>().toList();
-
-    return StatRowWidget(key: ValueKey(itemContext.id), stats: stats);
-  },
+  builder: (_, _, props, _) => StatRowWidget(stats: props.objects('stats')),
 );

@@ -8,6 +8,10 @@ class SelectInputWidget extends StatefulWidget {
   final String? event;
   final void Function(String event) dispatchEvent;
 
+  /// Called with the selected value on every selection, with or without
+  /// [event].
+  final void Function(String value)? onSelected;
+
   const SelectInputWidget({
     super.key,
     this.label,
@@ -16,6 +20,7 @@ class SelectInputWidget extends StatefulWidget {
     this.initialValue,
     this.event,
     required this.dispatchEvent,
+    this.onSelected,
   });
 
   @override
@@ -34,6 +39,7 @@ class _SelectInputWidgetState extends State<SelectInputWidget> {
   void _onChanged(String? value) {
     if (value == null) return;
     setState(() => _selected = value);
+    widget.onSelected?.call(value);
     if (widget.event != null && widget.event!.isNotEmpty) {
       widget.dispatchEvent('${widget.event}:$value');
     }

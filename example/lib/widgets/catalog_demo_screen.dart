@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:genui_catalog_example/models/preset.dart';
 import '../services/ai_service.dart';
 import '../services/api_key_provider.dart';
@@ -7,7 +7,7 @@ import '../services/api_key_provider.dart';
 /// Reusable base for catalog demo screens.
 ///
 /// Shows a header with catalog info, preset prompt chips, and an AI-generated
-/// [Surface] that updates each time a preset is tapped.
+/// [A2uiSurface] that updates each time a preset is tapped.
 class CatalogDemoScreen extends StatefulWidget {
   final String catalogName;
   final String subtitle;
@@ -251,7 +251,7 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // "Rendered by genui" label
+        // "Rendered via A2UI" label
         Row(
           children: [
             Icon(
@@ -261,7 +261,7 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
             ),
             const SizedBox(width: 6),
             Text(
-              'Rendered via genui · ${widget.catalogName}',
+              'Rendered via A2UI · ${widget.catalogName}',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -272,7 +272,7 @@ class _CatalogDemoScreenState extends State<CatalogDemoScreen> {
         ..._surfaceIds.map(
           (id) => Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: Surface(surfaceContext: _service!.controller.contextFor(id)),
+            child: A2uiSurface(surface: _service!.surface(id)!),
           ),
         ),
       ],

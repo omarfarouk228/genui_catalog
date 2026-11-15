@@ -1,34 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
+import '../../catalog_events.dart';
 import '../../widgets/data/empty_state.dart';
 
-final emptyStateItem = CatalogItem(
+/// The button sends `actionEvent`, or runs `action` when the agent declares
+/// one.
+final emptyStateItem = ComponentImplementation(
   name: 'EmptyState',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'description': S.string(),
-      'icon': S.string(),
-      'actionLabel': S.string(),
-      'actionEvent': S.string(),
+      'title': CatalogSchemas.text,
+      'description': CatalogSchemas.text,
+      'icon': Schema.string(),
+      'actionLabel': CatalogSchemas.text,
+      'actionEvent': Schema.string(),
+      'action': CatalogSchemas.action,
     },
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-
-    return EmptyStateWidget(
-      key: ValueKey(itemContext.id),
-      title: data['title'] as String?,
-      description: data['description'] as String?,
-      iconName: data['icon'] as String?,
-      actionLabel: data['actionLabel'] as String?,
-      actionEvent: data['actionEvent'] as String?,
-      dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => EmptyStateWidget(
+    title: props.string('title'),
+    description: props.string('description'),
+    iconName: props.string('icon'),
+    actionLabel: props.string('actionLabel'),
+    actionEvent:
+        props.string('actionEvent') ??
+        (props.action('action') != null
+            ? CatalogEvents.emptyStateAction
+            : null),
+    dispatchEvent: (eventName) => dispatchCatalogEvent(node, props, eventName),
+  ),
 );

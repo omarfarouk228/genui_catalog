@@ -1,20 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/workflow/timeline_card.dart';
 
-final timelineCardItem = CatalogItem(
+final timelineCardItem = ComponentImplementation(
   name: 'TimelineCard',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'events': S.list(
-        items: S.object(
+      'title': CatalogSchemas.text,
+      'events': Schema.list(
+        items: Schema.object(
           properties: {
-            'time': S.string(),
-            'title': S.string(),
-            'description': S.string(),
-            'status': S.string(),
+            'time': Schema.string(),
+            'title': Schema.string(),
+            'description': Schema.string(),
+            'status': Schema.string(),
           },
           required: ['title'],
         ),
@@ -22,16 +24,8 @@ final timelineCardItem = CatalogItem(
     },
     required: ['events'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final rawEvents = data['events'] as List<dynamic>? ?? [];
-    final events = rawEvents.whereType<Map<String, dynamic>>().toList();
-
-    return TimelineCardWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      events: events,
-    );
-  },
+  builder: (_, _, props, _) => TimelineCardWidget(
+    title: props.string('title'),
+    events: props.objects('events'),
+  ),
 );

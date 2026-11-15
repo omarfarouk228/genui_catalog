@@ -5,7 +5,10 @@ class SearchBarWidget extends StatefulWidget {
   final String? placeholder;
   final int debounceMs;
   final int minChars;
-  final void Function(String event) dispatchEvent;
+
+  /// Called with `search_query` and the query once it has at least
+  /// [minChars] characters and the user paused for [debounceMs].
+  final void Function(String event, String query) dispatchEvent;
 
   const SearchBarWidget({
     super.key,
@@ -35,7 +38,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     _debounce?.cancel();
     _debounce = Timer(Duration(milliseconds: widget.debounceMs), () {
       if (value.length >= widget.minChars) {
-        widget.dispatchEvent('search_query');
+        widget.dispatchEvent('search_query', value);
       }
     });
   }

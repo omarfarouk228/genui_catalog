@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-15
+
+Migration from the discontinued [`genui`](https://pub.dev/packages/genui) to its replacement,
+[`a2ui_flutter`](https://pub.dev/packages/a2ui_flutter) `^0.3.0` + [`a2ui_core`](https://pub.dev/packages/a2ui_core)
+`^0.7.0` (A2UI protocol v1.0). `genui` pins `a2ui_core` to `^0.1.0`, so the two cannot be used
+together: this release is breaking. See "Migrating from 0.5 (genui)" in the README.
+
+### Changed (breaking)
+
+- **Dependencies:** `genui` is replaced by `a2ui_core` and `a2ui_flutter`. Flutter `>=3.38.0`.
+- **Components** are `ComponentImplementation`s (was `CatalogItem`) and catalogs are
+  `CatalogImplementation`s (was `Catalog`), for a `MessageProcessor` next to `basicCatalog()`.
+  `GenUICatalog.allItems` / `findItem` return `ComponentImplementation`s.
+- **Catalog ids** are URIs: `GenUICatalog.catalogId`, `DataCatalog.catalogId`, … (were
+  `genui_catalog`, `genui_catalog/data`, …).
+- **Prompt fragments:** `systemPromptFragments` is replaced by each catalog's `instructions`,
+  which `a2ui_agent` puts in its prompt snippet.
+- `DataContext` is no longer exported.
+- **Strict validation:** a component missing a required property is now rejected by the
+  `MessageProcessor` (it used to render with defaults).
+
+### Unchanged
+
+- **Event names and contexts:** components send the same `CatalogEvents` names with the same
+  context, now as `A2uiRendererAction`s on `processor.model.onAction`.
+
+### Added
+
+- **Data model bindings:** text properties accept `{"@path": ...}`. Inputs write the user's
+  input to the path their value is bound to: `RatingInput.value` (two-way), `SearchBar.value`,
+  `SelectInput.value`, `CheckboxGroup.values`, `SwitchGroup.values`, `ActionForm.values`.
+- **Declared actions:** `ActionForm`, `SearchBar`, `RatingInput` and `EmptyState` take an A2UI
+  `action`, which runs instead of their default event.
+- **Example:** the demo app uses `a2ui_agent` to build the Gemini prompt from the catalogs and to
+  parse its streamed replies, and sends user actions back to the model.
+
+### Fixed
+
+- **SearchBar** now sends the query: `search_query` carries `{query}`. It used to send the event
+  name only.
+
+---
+
 ## [0.5.0] - 2026-09-25
 
 Fixes found while building [Lébénam Triage](https://github.com/omarfarouk228/lebenam_triage),

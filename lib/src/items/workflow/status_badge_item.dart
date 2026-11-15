@@ -1,29 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/workflow/status_badge.dart';
 
-final statusBadgeItem = CatalogItem(
+final statusBadgeItem = ComponentImplementation(
   name: 'StatusBadge',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'label': S.string(),
-      'status': S.string(),
-      'description': S.string(),
+      'label': CatalogSchemas.text,
+      'status': Schema.string(),
+      'description': CatalogSchemas.text,
     },
     required: ['label', 'status'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final label = data['label'] as String? ?? '';
-    final status = data['status'] as String? ?? 'neutral';
-    final description = data['description'] as String?;
-
-    return StatusBadgeWidget(
-      key: ValueKey(itemContext.id),
-      label: label,
-      status: status,
-      description: description,
-    );
-  },
+  builder: (_, _, props, _) => StatusBadgeWidget(
+    label: props.string('label') ?? '',
+    status: props.string('status') ?? 'neutral',
+    description: props.string('description'),
+  ),
 );

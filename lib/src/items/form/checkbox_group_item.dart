@@ -1,44 +1,41 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/form/checkbox_group.dart';
 
-final checkboxGroupItem = CatalogItem(
+/// Writes the checked values to the path `values` is bound to on every
+/// change, and sends its `event` as before (see `FormCatalog`).
+final checkboxGroupItem = ComponentImplementation(
   name: 'CheckboxGroup',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'label': S.string(),
-      'event': S.string(),
-      'submitLabel': S.string(),
-      'initialValues': S.list(items: S.string()),
-      'options': S.list(
-        items: S.object(
-          properties: {'value': S.string(), 'label': S.string()},
+      'label': CatalogSchemas.text,
+      'event': Schema.string(),
+      'submitLabel': CatalogSchemas.text,
+      'initialValues': Schema.list(items: Schema.string()),
+      'values': CatalogSchemas.stringList,
+      'options': Schema.list(
+        items: Schema.object(
+          properties: {'value': Schema.string(), 'label': Schema.string()},
           required: ['value'],
         ),
       ),
     },
     required: ['options'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawOptions = data['options'] as List<dynamic>? ?? [];
-    final options = rawOptions.whereType<Map<String, dynamic>>().toList();
-    final rawInitial = data['initialValues'] as List<dynamic>? ?? [];
-    final initialValues = rawInitial.whereType<String>().toList();
-
+  builder: (_, node, props, _) {
+    final bound = props.strings('values');
     return CheckboxGroupWidget(
-      key: ValueKey(itemContext.id),
-      label: data['label'] as String?,
-      event: data['event'] as String?,
-      options: options,
-      initialValues: initialValues,
-      submitLabel: data['submitLabel'] as String?,
-      dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
-        );
-      },
+      label: props.string('label'),
+      event: props.string('event'),
+      options: props.objects('options'),
+      initialValues: bound.isNotEmpty ? bound : props.strings('initialValues'),
+      submitLabel: props.string('submitLabel'),
+      onChanged: (values) => props.writeBack('values', values),
+      dispatchEvent: (eventName) =>
+          dispatchCatalogEvent(node, props, eventName, actionKey: null),
     );
   },
 );

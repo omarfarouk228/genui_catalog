@@ -1,48 +1,40 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/data/data_table_widget.dart';
 
-final dataTableItem = CatalogItem(
+const _rowLimit = 100;
+
+final dataTableItem = ComponentImplementation(
   name: 'DataTable',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'columns': S.list(
-        items: S.object(
+      'title': CatalogSchemas.text,
+      'columns': Schema.list(
+        items: Schema.object(
           properties: {
-            'key': S.string(),
-            'label': S.string(),
-            'align': S.string(),
+            'key': Schema.string(),
+            'label': Schema.string(),
+            'align': Schema.string(),
           },
           required: ['key', 'label'],
         ),
       ),
-      'rows': S.list(items: S.object(properties: {})),
-      'striped': S.boolean(),
+      'rows': Schema.list(items: Schema.object(properties: {})),
+      'striped': Schema.boolean(),
     },
     required: ['columns', 'rows'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final striped = data['striped'] as bool? ?? false;
-
-    final rawColumns = data['columns'] as List<dynamic>? ?? [];
-    final columns = rawColumns.whereType<Map<String, dynamic>>().toList();
-
-    final rawRows = data['rows'] as List<dynamic>? ?? [];
-    final allRows = rawRows.whereType<Map<String, dynamic>>().toList();
-    const rowLimit = 100;
-    final rows = allRows.take(rowLimit).toList();
-
+  builder: (_, _, props, _) {
+    final allRows = props.objects('rows');
     return DataTableWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      columns: columns,
-      rows: rows,
-      striped: striped,
-      totalRowCount: allRows.length > rowLimit ? allRows.length : null,
+      title: props.string('title'),
+      columns: props.objects('columns'),
+      rows: allRows.take(_rowLimit).toList(),
+      striped: props.boolean('striped') ?? false,
+      totalRowCount: allRows.length > _rowLimit ? allRows.length : null,
     );
   },
 );

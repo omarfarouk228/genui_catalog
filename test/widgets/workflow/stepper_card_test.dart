@@ -98,19 +98,14 @@ void main() {
 
   group('stepperCardItem', () {
     testWidgets('builds StepperCardWidget', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'steps': [
-            {'title': 'A', 'description': 'step a'},
-            {'title': 'B', 'description': 'step b'},
-          ],
-          'initialStep': 0,
-          'showNavigation': false,
-        },
-        type: 'StepperCard',
-      );
-      await tester.pumpWidget(wrap(stepperCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, stepperCardItem, {
+        'steps': [
+          {'title': 'A', 'description': 'step a'},
+          {'title': 'B', 'description': 'step b'},
+        ],
+        'currentStep': 0,
+        'showNavigation': false,
+      });
       expect(find.byType(StepperCardWidget), findsOneWidget);
     });
   });

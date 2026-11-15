@@ -1,45 +1,45 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
+import '../../catalog_events.dart';
 import '../../widgets/form/rating_input.dart';
 
-final ratingInputItem = CatalogItem(
+/// A star rating whose `value` is two-way: bound to a data path
+/// (`{"@path": "/rating"}`), it shows the rating there and every tap writes
+/// the new one back. Each tap then sends `rating_submitted` with
+/// `{rating, maxStars}`, or runs `action` when the agent declares one.
+final ratingInputItem = ComponentImplementation(
   name: 'RatingInput',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'maxStars': S.integer(),
-      'label': S.string(),
-      'allowHalf': S.boolean(),
-      'noRatingLabel': S.string(),
-      'outOfLabel': S.string(),
+      'title': CatalogSchemas.text,
+      'label': CatalogSchemas.text,
+      'maxStars': Schema.integer(minimum: 1, maximum: 10),
+      'allowHalf': Schema.boolean(),
+      'value': CatalogSchemas.number,
+      'action': CatalogSchemas.action,
+      'noRatingLabel': CatalogSchemas.text,
+      'outOfLabel': CatalogSchemas.text,
     },
-    required: [],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final maxStars = data['maxStars'] as int? ?? 5;
-    final label = data['label'] as String?;
-    final allowHalf = data['allowHalf'] as bool? ?? false;
-
-    return RatingInputWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      maxStars: maxStars,
-      label: label,
-      allowHalf: allowHalf,
-      noRatingLabel: data['noRatingLabel'] as String? ?? 'No rating',
-      outOfLabel: data['outOfLabel'] as String? ?? 'out of',
-      dispatchEvent: (eventName, context) {
-        itemContext.dispatchEvent(
-          UserActionEvent(
-            name: eventName,
-            sourceComponentId: itemContext.id,
-            context: context,
-          ),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => RatingInputWidget(
+    title: props.string('title'),
+    label: props.string('label'),
+    maxStars: props.integer('maxStars') ?? 5,
+    allowHalf: props.boolean('allowHalf') ?? false,
+    rating: props.number('value'),
+    noRatingLabel: props.string('noRatingLabel') ?? 'No rating',
+    outOfLabel: props.string('outOfLabel') ?? 'out of',
+    dispatchEvent: (_, eventContext) {
+      props.writeBack('value', eventContext['rating']);
+      dispatchCatalogEvent(
+        node,
+        props,
+        CatalogEvents.ratingSubmitted,
+        context: eventContext,
+      );
+    },
+  ),
 );

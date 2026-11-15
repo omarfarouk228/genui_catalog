@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genui/genui.dart';
 import 'package:genui_catalog/src/items/form/rating_input_item.dart';
 import 'package:genui_catalog/src/widgets/form/rating_input.dart';
 import '../../helpers.dart';
@@ -80,18 +79,6 @@ void main() {
     });
   });
 
-  group('ratingInputItem', () {
-    testWidgets('builds RatingInputWidget', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'maxStars': 5, 'allowHalf': false},
-        type: 'RatingInput',
-      );
-      await tester.pumpWidget(wrap(ratingInputItem.widgetBuilder(ctx)));
-      expect(find.byType(RatingInputWidget), findsOneWidget);
-    });
-  });
-
   group('RatingInputWidget rating value', () {
     testWidgets('dispatches the selected rating and maxStars', (tester) async {
       final sent = <(String, Map<String, Object>)>[];
@@ -108,24 +95,6 @@ void main() {
       await tester.pump();
       expect(sent.single.$1, 'rating_submitted');
       expect(sent.single.$2, {'rating': 4, 'maxStars': 5});
-    });
-
-    testWidgets('item forwards the rating in the event context', (
-      tester,
-    ) async {
-      final events = <UiEvent>[];
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'maxStars': 5, 'allowHalf': false},
-        type: 'RatingInput',
-        onDispatch: events.add,
-      );
-      await tester.pumpWidget(wrap(ratingInputItem.widgetBuilder(ctx)));
-      await tester.tap(find.byIcon(Icons.star_border).at(1));
-      await tester.pump();
-      final event = events.single as UserActionEvent;
-      expect(event.name, 'rating_submitted');
-      expect(event.context, {'rating': 2, 'maxStars': 5});
     });
 
     testWidgets('uses translated screen-reader labels', (tester) async {
@@ -146,6 +115,121 @@ void main() {
       await tester.pump();
       expect(tester.getSemantics(find.byType(Row).first).value, '3.0 sur 5');
       handle.dispose();
+    });
+  });
+
+  group('RatingInputWidget controlled rating', () {
+    testWidgets('starts from and follows the given rating', (tester) async {
+      Widget build(double rating) => wrap(
+        RatingInputWidget(
+          maxStars: 5,
+          allowHalf: false,
+          rating: rating,
+          dispatchEvent: (_, _) {},
+        ),
+      );
+      await tester.pumpWidget(build(2));
+      expect(find.byIcon(Icons.star), findsNWidgets(2));
+      await tester.pumpWidget(build(4));
+      expect(find.byIcon(Icons.star), findsNWidgets(4));
+    });
+  });
+
+  group('ratingInputItem (A2UI)', () {
+    final catalog = testCatalog([ratingInputItem]);
+
+    testWidgets('renders literal properties', (tester) async {
+      final harness = await A2uiHarness.pump(
+        tester,
+        catalog: catalog,
+        components: [
+          {
+            'id': 'root',
+            'component': 'RatingInput',
+            'title': 'Feedback',
+            'maxStars': 4,
+            'value': 1,
+          },
+        ],
+      );
+      expect(find.text('Feedback'), findsOneWidget);
+      expect(find.byIcon(Icons.star), findsOneWidget);
+      expect(find.byIcon(Icons.star_border), findsNWidgets(3));
+      expect(harness.errors, isEmpty);
+    });
+
+    testWidgets('writes the rating to the bound path and runs the action', (
+      tester,
+    ) async {
+      final harness = await A2uiHarness.pump(
+        tester,
+        catalog: catalog,
+        dataModel: {'rating': 1},
+        components: [
+          {
+            'id': 'root',
+            'component': 'RatingInput',
+            'maxStars': 5,
+            'value': {'@path': '/rating'},
+            'action': {
+              'event': {
+                'name': 'rating_submitted',
+                'context': {
+                  'rating': {'@path': '/rating'},
+                },
+              },
+            },
+          },
+        ],
+      );
+      expect(find.byIcon(Icons.star), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.star_border).at(2)); // 4th star
+      await tester.pump();
+
+      expect(harness.data('/rating'), 4);
+      expect(find.byIcon(Icons.star), findsNWidgets(4));
+      final action = harness.actions.single;
+      expect(action.name, 'rating_submitted');
+      expect(action.context, {'rating': 4});
+      expect(harness.errors, isEmpty);
+    });
+
+    testWidgets('follows data model updates from the agent', (tester) async {
+      final harness = await A2uiHarness.pump(
+        tester,
+        catalog: catalog,
+        dataModel: {'rating': 1},
+        components: [
+          {
+            'id': 'root',
+            'component': 'RatingInput',
+            'value': {'@path': '/rating'},
+          },
+        ],
+      );
+      harness.processor.processMessages([
+        {
+          'version': '1.0',
+          'updateDataModel': {
+            'surfaceId': testSurfaceId,
+            'path': '/rating',
+            'value': 3,
+          },
+        },
+      ]);
+      await tester.pump();
+      expect(find.byIcon(Icons.star), findsNWidgets(3));
+    });
+
+    testWidgets('without an action, sends rating_submitted', (tester) async {
+      final harness = await pumpItem(tester, ratingInputItem, {});
+      await tester.tap(find.byIcon(Icons.star_border).at(1));
+      await tester.pump();
+      expect(find.byIcon(Icons.star), findsNWidgets(2));
+      final action = harness.actions.single;
+      expect(action.name, 'rating_submitted');
+      expect(action.context, {'rating': 2, 'maxStars': 5});
     });
   });
 }

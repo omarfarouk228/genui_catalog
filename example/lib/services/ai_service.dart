@@ -1,35 +1,72 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:a2ui_agent/a2ui_agent.dart';
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/basic_catalog.dart';
 import 'package:flutter/foundation.dart';
-import 'package:genui/genui.dart';
 import 'package:genui_catalog/genui_catalog.dart';
 import 'package:google_generative_ai/google_generative_ai.dart' as genai;
 
-/// Wires [SurfaceController] + [A2uiTransportAdapter] + Gemini together.
+/// Wires an A2UI [MessageProcessor] (the renderer), an `a2ui_agent`
+/// request processor (prompt + response parsing) and Gemini together.
 ///
 /// Usage:
 /// ```dart
 /// final service = AiService(apiKey: 'YOUR_KEY');
 /// service.onSurfaceAdded = (id) => setState(() => _surfaceId = id);
 /// await service.send('Show me a revenue dashboard');
-/// // Then: Surface(surfaceContext: service.controller.surfaceContext(id))
+/// // Then: A2uiSurface(surface: service.surface(id)!)
 /// ```
+/// Sends one turn to the model and streams its reply.
+typedef TurnGenerator = Stream<String> Function(String turn);
+
 class AiService {
-  AiService({required String apiKey}) {
-    _init(apiKey);
+  /// A service whose model is Gemini, called with [apiKey].
+  AiService({required String apiKey})
+    : this.withModel((systemPrompt) {
+        final chat = genai.GenerativeModel(
+          model: 'gemini-2.5-flash',
+          apiKey: apiKey,
+          systemInstruction: genai.Content.system(systemPrompt),
+          generationConfig: genai.GenerationConfig(
+            temperature: 0.4,
+            maxOutputTokens: 8192,
+          ),
+        ).startChat();
+        return (turn) => chat
+            .sendMessageStream(genai.Content.text(turn))
+            .map((response) => response.text ?? '');
+      });
+
+  /// A service whose model [createModel] creates from the system prompt.
+  @visibleForTesting
+  AiService.withModel(TurnGenerator Function(String systemPrompt) createModel) {
+    _init();
+    _generate = createModel(systemPrompt);
   }
 
-  // ── genui ─────────────────────────────────────────────────────────────────
+  static final List<CatalogImplementation> _catalogs = [
+    basicCatalog(),
+    GenUICatalog.all,
+  ];
 
-  late final SurfaceController controller;
-  late final A2uiTransportAdapter _transport;
-  late final Conversation _conversation;
+  // ── A2UI ──────────────────────────────────────────────────────────────────
 
-  // ── Gemini ────────────────────────────────────────────────────────────────
+  /// The renderer: applies the model's messages and holds the surfaces.
+  late final MessageProcessor<ComponentImplementation> processor;
 
-  late final genai.GenerativeModel _model;
-  genai.ChatSession? _chat;
+  /// The agent side: the prompt snippet and the parser of Gemini's replies.
+  late final A2uiRequestProcessor _agent;
+  late final RendererState _state;
+
+  // ── Model ─────────────────────────────────────────────────────────────────
+
+  late final TurnGenerator _generate;
+
+  /// The app instructions followed by the agent SDK's prompt snippet, which
+  /// teaches the model the catalogs' components.
+  String get systemPrompt => '$_appInstructions\n${_agent.promptSnippet}';
 
   // ── Callbacks ─────────────────────────────────────────────────────────────
 
@@ -37,58 +74,39 @@ class AiService {
   void Function(String surfaceId)? onSurfaceRemoved;
   ValueChanged<Object>? onError;
 
-  StreamSubscription<ChatMessage>? _controllerSubmitSubscription;
+  bool _disposed = false;
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
-  void _init(String apiKey) {
-    controller = SurfaceController(
-      catalogs: [BasicCatalogItems.asCatalog(), GenUICatalog.all],
+  void _init() {
+    _agent =
+        A2uiGenerator(
+          catalogs: [for (final c in _catalogs) CatalogConfig(c)],
+          inferenceFormatFactory: const DirectJsonFormatFactory(),
+        ).createProcessor(
+          A2uiRendererCapabilities.forCatalogIds([
+            for (final c in _catalogs) c.id,
+          ], version: A2uiProtocolVersion.v1_0),
+        );
+    _state = _agent.createState();
+
+    processor = MessageProcessor<ComponentImplementation>(
+      catalogs: _catalogs,
+      defaultVersion: A2uiProtocolVersion.v1_0,
+      // A half-streamed surface would fail the strict checks.
+      validationConfig: ValidationConfig.relaxed,
+      outboundListener: _sendOutbound,
+      unifiedOutbound: true,
     );
-
-    _transport = A2uiTransportAdapter(onSend: _handleTransportSend);
-
-    // Conversation already forwards transport.incomingMessages to
-    // controller.handleMessage. Do not subscribe a second time: since genui
-    // 0.10 a duplicate createSurface for an active surface is an error.
-    _conversation = Conversation(controller: controller, transport: _transport);
-
-    _controllerSubmitSubscription = controller.onSubmit.listen((message) {
-      // Log UI interaction events (button clicks, field submissions) for debugging.
-      debugPrint('AiService: submit event from UI action -> $message');
+    processor.model.onSurfaceCreated.subscribe((surface) {
+      surface.onError.subscribe(
+        (error) => debugPrint('AiService: ${error.code}: ${error.message}'),
+      );
+      onSurfaceAdded?.call(surface.id);
     });
-
-    _conversation.events.listen((event) {
-      debugPrint('AiService: Conversation event: $event');
-      if (event is ConversationSurfaceAdded) {
-        debugPrint('AiService: Surface added: ${event.surfaceId}');
-        onSurfaceAdded?.call(event.surfaceId);
-      } else if (event is ConversationSurfaceRemoved) {
-        debugPrint('AiService: Surface removed: ${event.surfaceId}');
-        onSurfaceRemoved?.call(event.surfaceId);
-      }
-    });
-
-    // Build the system prompt — includes every component schema from the
-    // catalog so Gemini knows exactly what components exist.
-    final promptBuilder = PromptBuilder.chat(
-      catalog: GenUICatalog.all,
-      systemPromptFragments: [_systemInstructions],
+    processor.model.onSurfaceDeleted.subscribe(
+      (id) => onSurfaceRemoved?.call(id),
     );
-
-    _model = genai.GenerativeModel(
-      model: 'gemini-2.5-flash',
-      apiKey: apiKey,
-      systemInstruction: genai.Content.system(
-        promptBuilder.systemPrompt().map((fragment) => fragment).join('\n'),
-      ),
-      generationConfig: genai.GenerationConfig(
-        temperature: 0.4,
-        maxOutputTokens: 4096,
-      ),
-    );
-
-    _chat = _model.startChat();
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
@@ -96,22 +114,32 @@ class AiService {
   bool _isWaiting = false;
   bool get isWaiting => _isWaiting;
 
-  /// Sends [userText] to Gemini and streams the response through the
-  /// genui transport pipeline.
-  Future<void> send(String userText) async {
-    debugPrint('AiService: Sending request: $userText');
-    _responseBuffer.clear(); // Clear buffer for new request
-    if (_isWaiting || userText.trim().isEmpty) return;
-    _isWaiting = true;
+  /// The surface [surfaceId], once the model created it.
+  SurfaceModel<ComponentImplementation>? surface(String surfaceId) =>
+      processor.model.getSurface(surfaceId);
 
+  /// Sends [userText] to Gemini and applies the UI it streams back.
+  Future<void> send(String userText) async {
+    if (_isWaiting || userText.trim().isEmpty) return;
+    await _runTurn(userText.trim());
+  }
+
+  // ── Turns ─────────────────────────────────────────────────────────────────
+
+  Future<void> _runTurn(String turn) async {
+    _isWaiting = true;
+    final ResponseStream stream = _agent.openStream(state: _state);
     try {
-      await _conversation.sendRequest(
-        ChatMessage(
-          role: ChatMessageRole.user,
-          parts: [TextPart(userText.trim())],
-        ),
-      );
-      debugPrint('AiService: Request sent successfully');
+      await for (final chunk in _generate(turn)) {
+        if (_disposed) return;
+        if (chunk.isNotEmpty) _deliver(stream.feed(chunk));
+      }
+      _deliver(stream.close());
+    } on A2uiError catch (e) {
+      // Apply what was valid before the failure, then report it.
+      _deliver(e.partialResults.whereType<ResponsePart>().toList());
+      debugPrint('AiService: rejected reply: $e');
+      onError?.call(e);
     } catch (e, st) {
       debugPrint('AiService.send error: $e\n$st');
       onError?.call(e);
@@ -120,255 +148,59 @@ class AiService {
     }
   }
 
-  Future<void> _handleTransportSend(ChatMessage message) async {
-    try {
-      final parts = <genai.Part>[];
-      for (final part in message.parts) {
-        if (part is TextPart) {
-          parts.add(genai.TextPart(part.text));
-        } else if (part is DataPart) {
-          if (part.mimeType == UiPartConstants.interactionMimeType) {
-            try {
-              final uiInteraction = UiInteractionPart.fromDataPart(part);
-              final interactionText = _interactionToPrompt(
-                uiInteraction.interaction,
-              );
-              parts.add(genai.TextPart(interactionText));
-            } catch (e) {
-              debugPrint('AiService: Failed to parse UiInteractionPart: $e');
-            }
-          } else if (part.mimeType == UiPartConstants.uiMimeType) {
-            // UI definition parts should not be forwarded to the LLM.
-            continue;
-          } else {
-            parts.add(genai.DataPart(part.mimeType, part.bytes));
-          }
+  void _deliver(List<ResponsePart> parts) {
+    for (final part in parts) {
+      if (part case A2uiPart(:final a2ui)) {
+        for (final message in a2ui) {
+          processor.processMessages(AgentToRendererMessagePayload.of(message));
         }
+      } else if (part case TextPart(:final text)) {
+        if (text.trim().isNotEmpty) debugPrint('AiService: model says: $text');
       }
-
-      if (parts.isEmpty) {
-        debugPrint('AiService: No model-compatible parts to send; skipping');
-        return;
-      }
-
-      final content = genai.Content(message.role.name, parts);
-      final stream = _chat!.sendMessageStream(content);
-
-      // Reset buffer for new request
-      _responseBuffer.clear();
-
-      await for (final response in stream) {
-        _processModelResponse(response);
-      }
-
-      // Process any remaining content in buffer after stream ends
-      if (_responseBuffer.isNotEmpty) {
-        debugPrint('AiService: Processing final buffer content');
-        _processFinalBuffer();
-      }
-    } catch (e, st) {
-      debugPrint('AiService._handleTransportSend error: $e\n$st');
-      onError?.call(e);
     }
   }
 
-  String _interactionToPrompt(String interactionJson) {
-    try {
-      final dynamic payload = json.decode(interactionJson);
-      if (payload is Map<String, dynamic> && payload['action'] != null) {
-        final action = payload['action'];
-        // Provide a simple, readable action message for the model.
-        return 'User interaction event: ${json.encode(action)}';
-      }
-    } catch (_) {
-      // Fall back to raw interaction string.
+  /// Sends a user action on a surface back to Gemini as the next turn, with
+  /// the data model of surfaces created with `sendDataModel`.
+  void _sendOutbound(RendererToAgentMessage message) {
+    if (_disposed || message is ErrorMessage) return;
+    if (message is ActionMessage) {
+      debugPrint(
+        'AiService: action ${message.action.name} '
+        '${jsonEncode(message.action.context)}',
+      );
     }
-    return 'User interaction event: $interactionJson';
-  }
-
-  void _processModelResponse(genai.GenerateContentResponse response) {
-    // Only process the parts, not response.text to avoid duplication
-    for (final candidate in response.candidates) {
-      for (final part in candidate.content.parts) {
-        if (part is genai.DataPart) {
-          try {
-            final decoded = utf8.decode(part.bytes);
-            if (decoded.isNotEmpty) {
-              debugPrint('AiService: Received data chunk: $decoded');
-              _accumulateResponse(decoded);
-            }
-          } catch (_) {
-            // Non UTF-8 bytes are not processed.
-          }
-        } else if (part is genai.TextPart) {
-          if (part.text.isNotEmpty) {
-            debugPrint('AiService: Received text part: ${part.text}');
-            _accumulateResponse(part.text);
-          }
-        }
-      }
-    }
-    // Don't parse here - wait for stream to complete
-  }
-
-  final StringBuffer _responseBuffer = StringBuffer();
-
-  void _accumulateResponse(String text) {
-    // Simply accumulate all text - parsing will happen after stream completes
-    _responseBuffer.write(text);
-  }
-
-  void _processFinalBuffer() {
-    final content = _responseBuffer.toString();
-    debugPrint(
-      'AiService: Final buffer content (${content.length} chars): $content',
-    );
-
-    // Extract all complete JSON objects using brace counting on the raw buffer.
-    // This reliably handles the case where the LLM outputs multiple JSON objects
-    // separated by whitespace/newlines.
-    final jsonObjects = _extractJsonObjectsFromContent(content);
-
-    for (final jsonStr in jsonObjects) {
-      try {
-        final decoded = json.decode(jsonStr);
-        if (decoded is Map &&
-            decoded.containsKey('version') &&
-            (decoded.containsKey('createSurface') ||
-                decoded.containsKey('updateComponents'))) {
-          debugPrint('AiService: Valid A2UI JSON found: $jsonStr');
-          _transport.addChunk(jsonStr);
-        }
-      } catch (e) {
-        debugPrint('AiService: JSON decode error: $e for: $jsonStr');
-      }
-    }
-
-    _responseBuffer.clear();
-  }
-
-  List<String> _extractJsonObjectsFromContent(String content) {
-    final objects = <String>[];
-    int i = 0;
-
-    while (i < content.length) {
-      // Skip whitespace and find the start of a JSON object
-      while (i < content.length && content[i] != '{') {
-        i++;
-      }
-
-      if (i >= content.length) break;
-
-      // Found potential start of JSON object
-      final startIndex = i;
-      int braceCount = 0;
-      bool inString = false;
-      bool escaped = false;
-
-      // Parse through the content to find complete JSON objects
-      while (i < content.length) {
-        final char = content[i];
-
-        if (escaped) {
-          escaped = false;
-        } else if (char == '\\') {
-          escaped = true;
-        } else if (char == '"') {
-          inString = !inString;
-        } else if (!inString) {
-          if (char == '{') {
-            braceCount++;
-          } else if (char == '}') {
-            braceCount--;
-            // Check if we've found a complete object
-            if (braceCount == 0) {
-              final jsonCandidate = content.substring(startIndex, i + 1);
-              objects.add(jsonCandidate);
-              i++; // Move past the closing brace
-              break;
-            }
-          }
-        }
-
-        i++;
-      }
-
-      // If we exhausted the content with unclosed braces, the LLM truncated
-      // the JSON (missing closing `}` chars). Repair by appending them.
-      if (braceCount > 0) {
-        final truncated = content.substring(startIndex);
-        final repaired = truncated + ('}' * braceCount);
-        try {
-          json.decode(repaired);
-          objects.add(repaired);
-        } catch (_) {
-          // Cannot repair — skip
-        }
-        break;
-      }
-    }
-
-    return objects;
+    final dataModel = processor.getRendererDataModel();
+    final turn = jsonEncode({
+      'a2ui': RendererToAgentMessagePayload([message]).toJson(),
+      if (dataModel != null) 'metadata': {'a2uiRendererDataModel': dataModel},
+    });
+    unawaited(_runTurn(turn));
   }
 
   void dispose() {
-    _controllerSubmitSubscription?.cancel();
-    _conversation.dispose();
-    _transport.dispose();
-    controller.dispose();
+    _disposed = true;
+    processor.dispose();
   }
 }
 
 // ---------------------------------------------------------------------------
-// System instructions
+// App instructions (the catalogs' components come from the agent SDK's
+// prompt snippet)
 // ---------------------------------------------------------------------------
 
-const _systemInstructions = '''
-You are a UI generation assistant demonstrating the genui_catalog Flutter package.
-Generate Flutter UIs using the genui v0.9 protocol with the following components:
+const _appInstructions = '''
+You are a UI generation assistant demonstrating the genui_catalog Flutter
+package. Answer each request with one A2UI surface that showcases the
+GenUI Catalog components best matching it, with realistic sample data.
 
-KpiCard       → single KPI metric with trend indicator (up/down/neutral)
-StatRow       → 2–4 side-by-side stat cards
-DataTable     → tabular data with columns and rows
-ChartCard     → line / bar / pie chart (chartType required)
-TimelineCard  → vertical sequence of events with status (done/active/pending)
-StatusBadge   → colored status chip (success/warning/error/info/neutral)
-StepperCard   → multi-step process navigator with navigation buttons (previousLabel/nextLabel)
-ActionForm    → dynamic form with typed fields and a submit button
-SearchBar     → debounced search input
-RatingInput   → star rating picker; rating_submitted carries {rating, maxStars}
-ProfileCard   → person card with avatar, details, and action buttons
-MediaCard     → content card with image, tags, and action buttons
-SwitchGroup   → group of toggle switches with labels and subtitles (submitLabel = one Save button)
-SelectInput   → dropdown selection input with options
-CheckboxGroup → group of checkboxes with labels (submitLabel = one submit button)
-
-CRITICAL JSON OUTPUT REQUIREMENTS:
-- Output EXACTLY TWO separate JSON objects, one per line
-- NEVER split a single JSON object across multiple lines or responses
-- Each JSON object must be complete and parseable on its own
-- NEVER use markdown code blocks (```json or ```)
-- NEVER add any text before or after the JSON
-- Use "version": "v0.9" and "catalogId": "genui_catalog"
-- All JSON field names must be camelCase
-- All payloads must be valid JSON
-
-REQUIRED OUTPUT FORMAT:
-First line: {"version": "v0.9", "createSurface": {...}}
-Second line: {"version": "v0.9", "updateComponents": {...}}
-
-Example (output these exact two lines):
-{"version": "v0.9", "createSurface": {"surfaceId": "example", "catalogId": "genui_catalog", "sendDataModel": true}}
-{"version": "v0.9", "updateComponents": {"surfaceId": "example", "components": [{"id": "root", "component": "Column", "children": ["card1"]}, {"id": "card1", "component": "KpiCard", "title": "Revenue", "value": "\$12,450", "trend": "up"}]}}
-
-Rules:
-- Always emit createSurface first, then updateComponents on separate lines
-- In createSurface, set "version": "v0.9" and "catalogId": "genui_catalog"
-- All `updateComponents.components` entries must have a non-empty `id`
-- The root component should have `id: "root"`
-- If you need to stack components vertically/horizontally, use `Column` or `Row` with `children` ids
-- Use realistic, domain-appropriate sample data
-- All payloads must be valid JSON or valid GenUI protocol values (quoted strings for text, no unquoted commas in numbers, no raw currency/percent suffixes unless as string values)
-- Prefer safe values: e.g. "value": "12450" or "85,320" as string, not raw 12,450 or 85,320, and avoid unquoted percent signs like 4.7%
-- Choose components that best match the user's request
+- Give each new surface a new surfaceId. Use the GenUI Catalog components
+  (KpiCard, ChartCard, ActionForm, RatingInput, ...) and its Column/Row for
+  layout; use the basic catalog only for plain Text or Button.
+- Write numbers shown as text as strings: "value": "\$12,450", not 12450.
+- On a surface with inputs, set "sendDataModel": true and bind input values
+  to data model paths.
+- When the user acts on a surface, the next user turn is JSON whose "a2ui"
+  holds the renderer's v1.0 messages: an action with its name and context.
+  Answer it by updating that surface, or with a short new surface.
 ''';
