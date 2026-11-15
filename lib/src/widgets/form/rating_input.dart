@@ -12,6 +12,11 @@ class RatingInputWidget extends StatefulWidget {
   /// Screen-reader word between the rating and the maximum ("3 out of 5").
   final String outOfLabel;
 
+  /// The current rating, when it is owned outside the widget (for example by
+  /// an A2UI data model binding). `null` lets the widget keep its own state.
+  /// When it changes, the displayed rating follows it.
+  final double? rating;
+
   /// Called with `rating_submitted` and `{rating, maxStars}`.
   final void Function(String event, Map<String, Object> context) dispatchEvent;
 
@@ -22,6 +27,7 @@ class RatingInputWidget extends StatefulWidget {
     this.label,
     required this.allowHalf,
     required this.dispatchEvent,
+    this.rating,
     this.noRatingLabel = 'No rating',
     this.outOfLabel = 'out of',
   });
@@ -31,7 +37,18 @@ class RatingInputWidget extends StatefulWidget {
 }
 
 class _RatingInputWidgetState extends State<RatingInputWidget> {
-  double _rating = 0;
+  late double _rating = _clamp(widget.rating ?? 0);
+
+  double _clamp(double rating) => rating.clamp(0.0, widget.maxStars.toDouble());
+
+  @override
+  void didUpdateWidget(RatingInputWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final rating = widget.rating;
+    if (rating != null && rating != oldWidget.rating) {
+      _rating = _clamp(rating);
+    }
+  }
 
   void _onTap(int starIndex, bool isHalf) {
     _rate(isHalf ? starIndex - 0.5 : starIndex.toDouble());
