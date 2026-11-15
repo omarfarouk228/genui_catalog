@@ -94,16 +94,11 @@ void main() {
 
   group('checkboxGroupItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'options': [
-            {'value': 'x', 'label': 'X'},
-          ],
-        },
-        type: 'CheckboxGroup',
-      );
-      await tester.pumpWidget(wrap(checkboxGroupItem.widgetBuilder(ctx)));
+      await pumpItem(tester, checkboxGroupItem, {
+        'options': [
+          {'value': 'x', 'label': 'X'},
+        ],
+      });
       expect(find.byType(CheckboxGroupWidget), findsOneWidget);
     });
   });
@@ -142,18 +137,13 @@ void main() {
     });
 
     testWidgets('item passes submitLabel through', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'event': 'x',
-          'submitLabel': 'Send',
-          'options': [
-            {'value': 'a'},
-          ],
-        },
-        type: 'CheckboxGroup',
-      );
-      await tester.pumpWidget(wrap(checkboxGroupItem.widgetBuilder(ctx)));
+      await pumpItem(tester, checkboxGroupItem, {
+        'event': 'x',
+        'submitLabel': 'Send',
+        'options': [
+          {'value': 'a'},
+        ],
+      });
       expect(find.text('Send'), findsOneWidget);
     });
   });

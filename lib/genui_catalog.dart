@@ -1,12 +1,13 @@
-/// GenUI Catalog - Ready-to-use CatalogItems for building dynamic AI-generated UIs.
+/// GenUI Catalog - ready-to-use A2UI components for building dynamic
+/// AI-generated UIs with `a2ui_flutter`.
 ///
-/// This package provides high-level business components on top of the `genui` SDK.
-/// Use [GenUICatalog.all] to get a [Catalog] containing all available items, or
-/// use the individual sub-catalogs ([DataCatalog], [WorkflowCatalog], [FormCatalog],
-/// [MediaCatalog]) for more granular control.
+/// Use [GenUICatalog.all] to get a catalog containing every component, or
+/// the individual sub-catalogs ([DataCatalog], [WorkflowCatalog],
+/// [FormCatalog], [MediaCatalog]) for more granular control.
 library;
 
-export 'package:genui/genui.dart' show Catalog, CatalogItem, DataContext;
+export 'package:a2ui_flutter/a2ui_flutter.dart'
+    show CatalogImplementation, ComponentImplementation;
 
 export 'src/catalogs/data_catalog.dart';
 export 'src/catalogs/workflow_catalog.dart';
@@ -17,7 +18,9 @@ export 'src/catalog_events.dart';
 export 'src/utils/color_utils.dart';
 export 'src/utils/icon_utils.dart';
 
-import 'package:genui/genui.dart';
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+
 import 'src/catalogs/data_catalog.dart';
 import 'src/catalogs/workflow_catalog.dart';
 import 'src/catalogs/form_catalog.dart';
@@ -25,60 +28,65 @@ import 'src/catalogs/media_catalog.dart';
 
 /// Top-level catalog combining all four sub-catalogs.
 ///
-/// Usage:
+/// Register it next to the basic catalog, and give the agent its id:
 /// ```dart
-/// SurfaceController(
-///   catalogs: [GenUICatalog.all],
+/// final processor = MessageProcessor<ComponentImplementation>(
+///   catalogs: [basicCatalog(), GenUICatalog.all],
 /// );
 /// ```
 ///
-/// Listen to dispatched events using [CatalogEvents] constants:
+/// Listen to the actions components send, using [CatalogEvents]:
 /// ```dart
-/// if (event.name == CatalogEvents.formSubmit) { ... }
+/// processor.model.onAction.subscribe((action) {
+///   if (action.name == CatalogEvents.formSubmit) { ... }
+/// });
 /// ```
 class GenUICatalog {
   GenUICatalog._();
 
-  /// All [CatalogItem]s from every sub-catalog combined.
-  static List<CatalogItem> get allItems => [
+  /// All components from every sub-catalog combined.
+  static List<ComponentImplementation> get allItems => [
     ...DataCatalog.items,
     ...WorkflowCatalog.items,
     ...FormCatalog.items,
     ...MediaCatalog.items,
   ];
 
-  /// Names of all registered catalog items. Useful for generating prompts or
-  /// validating AI-generated component references.
+  /// Names of all components. Useful for generating prompts or validating
+  /// AI-generated component references.
   static List<String> get itemNames => allItems.map((i) => i.name).toList();
 
-  /// Finds a [CatalogItem] by name, or returns `null` if not found.
+  /// Finds a component by name, or returns `null` if not found.
   ///
   /// Name matching is case-sensitive and must be exact.
-  static CatalogItem? findItem(String name) {
-    try {
-      return allItems.firstWhere((item) => item.name == name);
-    } catch (_) {
-      return null;
+  static ComponentImplementation? findItem(String name) {
+    for (final item in allItems) {
+      if (item.name == name) return item;
     }
+    return null;
   }
 
-  /// A [Catalog] containing every item from all sub-catalogs.
-  static Catalog get all => asCatalog();
+  /// A catalog containing every component from all sub-catalogs.
+  static CatalogImplementation get all => asCatalog();
 
-  /// Catalog ID for the combined GenUI Catalog.
-  static const String catalogId = 'genui_catalog';
+  /// Catalog ID for the combined catalog.
+  static const String catalogId =
+      'https://github.com/omarfarouk228/genui_catalog/catalogs/all/v1';
 
-  /// Creates a [Catalog] from all sub-catalog items, with system prompt
-  /// fragments automatically generated from each sub-catalog's metadata.
-  static Catalog asCatalog() => Catalog(
-    allItems,
-    catalogId: catalogId,
-    systemPromptFragments: [
-      'Available components: ${itemNames.join(', ')}.',
-      ...DataCatalog.asCatalog().systemPromptFragments,
-      ...WorkflowCatalog.asCatalog().systemPromptFragments,
-      ...FormCatalog.asCatalog().systemPromptFragments,
-      ...MediaCatalog.asCatalog().systemPromptFragments,
-    ],
+  /// Instructions for the agent, combined from every sub-catalog.
+  static String get instructions => [
+    DataCatalog.instructions,
+    WorkflowCatalog.instructions,
+    FormCatalog.instructions,
+    MediaCatalog.instructions,
+  ].join('\n');
+
+  /// Creates an A2UI v1.0 catalog from all sub-catalog components.
+  static CatalogImplementation asCatalog() => CatalogImplementation(
+    id: catalogId,
+    protocolVersion: A2uiProtocolVersion.v1_0,
+    title: 'GenUI Catalog',
+    components: allItems,
+    instructions: instructions,
   );
 }

@@ -86,34 +86,24 @@ void main() {
         120,
         (i) => {'name': 'User $i', 'age': '$i'},
       );
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'columns': [
-            {'key': 'name', 'label': 'Name'},
-          ],
-          'rows': manyRows,
-        },
-        type: 'DataTable',
-      );
-      await tester.pumpWidget(wrap(dataTableItem.widgetBuilder(ctx)));
+      await pumpItem(tester, dataTableItem, {
+        'columns': [
+          {'key': 'name', 'label': 'Name'},
+        ],
+        'rows': manyRows,
+      });
       expect(find.textContaining('Showing 100 of 120 rows'), findsOneWidget);
     });
 
     testWidgets('does not show indicator when rows <= 100', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'columns': [
-            {'key': 'name', 'label': 'Name'},
-          ],
-          'rows': [
-            {'name': 'Alice'},
-          ],
-        },
-        type: 'DataTable',
-      );
-      await tester.pumpWidget(wrap(dataTableItem.widgetBuilder(ctx)));
+      await pumpItem(tester, dataTableItem, {
+        'columns': [
+          {'key': 'name', 'label': 'Name'},
+        ],
+        'rows': [
+          {'name': 'Alice'},
+        ],
+      });
       expect(find.textContaining('Showing'), findsNothing);
     });
   });

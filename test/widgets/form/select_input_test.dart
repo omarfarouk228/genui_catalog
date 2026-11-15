@@ -78,16 +78,11 @@ void main() {
 
   group('selectInputItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'options': [
-            {'value': 'a', 'label': 'A'},
-          ],
-        },
-        type: 'SelectInput',
-      );
-      await tester.pumpWidget(wrap(selectInputItem.widgetBuilder(ctx)));
+      await pumpItem(tester, selectInputItem, {
+        'options': [
+          {'value': 'a', 'label': 'A'},
+        ],
+      });
       expect(find.byType(SelectInputWidget), findsOneWidget);
     });
   });

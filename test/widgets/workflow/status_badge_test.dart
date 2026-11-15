@@ -44,16 +44,11 @@ void main() {
 
   group('statusBadgeItem', () {
     testWidgets('builds widget with label and description', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'label': 'Ready',
-          'status': 'success',
-          'description': 'All systems go',
-        },
-        type: 'StatusBadge',
-      );
-      await tester.pumpWidget(wrap(statusBadgeItem.widgetBuilder(ctx)));
+      await pumpItem(tester, statusBadgeItem, {
+        'label': 'Ready',
+        'status': 'success',
+        'description': 'All systems go',
+      });
       expect(find.byType(StatusBadgeWidget), findsOneWidget);
       expect(find.text('Ready'), findsOneWidget);
       expect(find.text('All systems go'), findsOneWidget);

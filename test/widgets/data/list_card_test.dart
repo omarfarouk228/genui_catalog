@@ -117,16 +117,11 @@ void main() {
 
   group('listCardItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'items': [
-            {'title': 'Hello'},
-          ],
-        },
-        type: 'ListCard',
-      );
-      await tester.pumpWidget(wrap(listCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, listCardItem, {
+        'items': [
+          {'title': 'Hello'},
+        ],
+      });
       expect(find.byType(ListCardWidget), findsOneWidget);
     });
   });

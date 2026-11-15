@@ -1,49 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/media/media_card.dart';
 
-final mediaCardItem = CatalogItem(
+/// Each action button sends its `event` as-is.
+final mediaCardItem = ComponentImplementation(
   name: 'MediaCard',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'content': S.string(),
-      'imageUrl': S.string(),
-      'tags': S.list(items: S.string()),
-      'actions': S.list(
-        items: S.object(
-          properties: {'label': S.string(), 'event': S.string()},
+      'title': CatalogSchemas.text,
+      'content': CatalogSchemas.text,
+      'imageUrl': CatalogSchemas.text,
+      'tags': Schema.list(items: Schema.string()),
+      'actions': Schema.list(
+        items: Schema.object(
+          properties: {'label': Schema.string(), 'event': Schema.string()},
           required: ['label', 'event'],
         ),
       ),
     },
     required: ['title'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String? ?? '';
-    final content = data['content'] as String?;
-    final imageUrl = data['imageUrl'] as String?;
-
-    final rawTags = data['tags'] as List<dynamic>? ?? [];
-    final tags = rawTags.map((e) => e.toString()).toList();
-
-    final rawActions = data['actions'] as List<dynamic>? ?? [];
-    final actions = rawActions.whereType<Map<String, dynamic>>().toList();
-
-    return MediaCardWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      content: content,
-      imageUrl: imageUrl,
-      tags: tags,
-      actions: actions,
-      dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => MediaCardWidget(
+    title: props.string('title') ?? '',
+    content: props.string('content'),
+    imageUrl: props.string('imageUrl'),
+    tags: props.strings('tags'),
+    actions: props.objects('actions'),
+    dispatchEvent: (eventName) =>
+        dispatchCatalogEvent(node, props, eventName, actionKey: null),
+  ),
 );

@@ -1,52 +1,41 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/workflow/stepper_card.dart';
 
-final stepperCardItem = CatalogItem(
+/// Navigation sends `next_step` and `prev_step` (see `CatalogEvents`).
+final stepperCardItem = ComponentImplementation(
   name: 'StepperCard',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'steps': S.list(
-        items: S.object(
+      'title': CatalogSchemas.text,
+      'steps': Schema.list(
+        items: Schema.object(
           properties: {
-            'title': S.string(),
-            'description': S.string(),
-            'completed': S.boolean(),
+            'title': Schema.string(),
+            'description': Schema.string(),
+            'completed': Schema.boolean(),
           },
           required: ['title'],
         ),
       ),
-      'currentStep': S.integer(),
-      'showNavigation': S.boolean(),
-      'previousLabel': S.string(),
-      'nextLabel': S.string(),
+      'currentStep': Schema.integer(),
+      'showNavigation': Schema.boolean(),
+      'previousLabel': CatalogSchemas.text,
+      'nextLabel': CatalogSchemas.text,
     },
     required: ['steps', 'currentStep'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final currentStep = data['currentStep'] as int? ?? 0;
-    final showNavigation = data['showNavigation'] as bool? ?? false;
-
-    final rawSteps = data['steps'] as List<dynamic>? ?? [];
-    final steps = rawSteps.whereType<Map<String, dynamic>>().toList();
-
-    return StepperCardWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      steps: steps,
-      initialStep: currentStep,
-      showNavigation: showNavigation,
-      previousLabel: data['previousLabel'] as String? ?? 'Previous',
-      nextLabel: data['nextLabel'] as String? ?? 'Next',
-      dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => StepperCardWidget(
+    title: props.string('title'),
+    steps: props.objects('steps'),
+    initialStep: props.integer('currentStep') ?? 0,
+    showNavigation: props.boolean('showNavigation') ?? false,
+    previousLabel: props.string('previousLabel') ?? 'Previous',
+    nextLabel: props.string('nextLabel') ?? 'Next',
+    dispatchEvent: (eventName) =>
+        dispatchCatalogEvent(node, props, eventName, actionKey: null),
+  ),
 );

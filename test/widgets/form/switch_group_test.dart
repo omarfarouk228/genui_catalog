@@ -103,16 +103,11 @@ void main() {
 
   group('switchGroupItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {
-          'options': [
-            {'value': 'a', 'label': 'A'},
-          ],
-        },
-        type: 'SwitchGroup',
-      );
-      await tester.pumpWidget(wrap(switchGroupItem.widgetBuilder(ctx)));
+      await pumpItem(tester, switchGroupItem, {
+        'options': [
+          {'value': 'a', 'label': 'A'},
+        ],
+      });
       expect(find.byType(SwitchGroupWidget), findsOneWidget);
     });
   });

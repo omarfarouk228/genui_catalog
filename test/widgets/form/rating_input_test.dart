@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui_catalog/src/items/form/rating_input_item.dart';
 import 'package:genui_catalog/src/widgets/form/rating_input.dart';
-import '../../a2ui_harness.dart';
+import '../../helpers.dart';
 
 void main() {
   group('RatingInputWidget', () {
@@ -192,11 +192,6 @@ void main() {
       final action = harness.actions.single;
       expect(action.name, 'rating_submitted');
       expect(action.context, {'rating': 4});
-      expect(action.metadata, {
-        'extensions': {
-          'genui_catalog': {'rating': 4, 'maxStars': 5},
-        },
-      });
       expect(harness.errors, isEmpty);
     });
 
@@ -227,30 +222,14 @@ void main() {
       expect(find.byIcon(Icons.star), findsNWidgets(3));
     });
 
-    testWidgets('without a binding, still sends the rating as metadata', (
-      tester,
-    ) async {
-      final harness = await A2uiHarness.pump(
-        tester,
-        catalog: catalog,
-        components: [
-          {
-            'id': 'root',
-            'component': 'RatingInput',
-            'action': {
-              'event': {'name': 'rated'},
-            },
-          },
-        ],
-      );
+    testWidgets('without an action, sends rating_submitted', (tester) async {
+      final harness = await pumpItem(tester, ratingInputItem, {});
       await tester.tap(find.byIcon(Icons.star_border).at(1));
       await tester.pump();
       expect(find.byIcon(Icons.star), findsNWidgets(2));
-      expect(harness.actions.single.metadata, {
-        'extensions': {
-          'genui_catalog': {'rating': 2, 'maxStars': 5},
-        },
-      });
+      final action = harness.actions.single;
+      expect(action.name, 'rating_submitted');
+      expect(action.context, {'rating': 2, 'maxStars': 5});
     });
   });
 }

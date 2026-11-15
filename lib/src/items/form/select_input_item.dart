@@ -1,42 +1,38 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
 import '../../widgets/form/select_input.dart';
 
-final selectInputItem = CatalogItem(
+/// Writes the selection to the path `value` is bound to, and sends
+/// `<event>:<value>` when `event` is set.
+final selectInputItem = ComponentImplementation(
   name: 'SelectInput',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'label': S.string(),
-      'placeholder': S.string(),
-      'initialValue': S.string(),
-      'event': S.string(),
-      'options': S.list(
-        items: S.object(
-          properties: {'value': S.string(), 'label': S.string()},
+      'label': CatalogSchemas.text,
+      'placeholder': CatalogSchemas.text,
+      'initialValue': Schema.string(),
+      'value': CatalogSchemas.text,
+      'event': Schema.string(),
+      'options': Schema.list(
+        items: Schema.object(
+          properties: {'value': Schema.string(), 'label': Schema.string()},
           required: ['value'],
         ),
       ),
     },
     required: ['options'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final rawOptions = data['options'] as List<dynamic>? ?? [];
-    final options = rawOptions.whereType<Map<String, dynamic>>().toList();
-
-    return SelectInputWidget(
-      key: ValueKey(itemContext.id),
-      label: data['label'] as String?,
-      placeholder: data['placeholder'] as String?,
-      initialValue: data['initialValue'] as String?,
-      event: data['event'] as String?,
-      options: options,
-      dispatchEvent: (eventName) {
-        itemContext.dispatchEvent(
-          UserActionEvent(name: eventName, sourceComponentId: itemContext.id),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => SelectInputWidget(
+    label: props.string('label'),
+    placeholder: props.string('placeholder'),
+    initialValue: props.string('value') ?? props.string('initialValue'),
+    event: props.string('event'),
+    options: props.objects('options'),
+    onSelected: (value) => props.writeBack('value', value),
+    dispatchEvent: (eventName) =>
+        dispatchCatalogEvent(node, props, eventName, actionKey: null),
+  ),
 );

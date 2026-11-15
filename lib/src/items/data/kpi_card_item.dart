@@ -1,42 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
-import '../../widgets/data/kpi_card.dart';
-import '../../utils/color_utils.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
 
-final kpiCardItem = CatalogItem(
+import '../../utils/a2ui_helpers.dart';
+import '../../utils/color_utils.dart';
+import '../../widgets/data/kpi_card.dart';
+
+final kpiCardItem = ComponentImplementation(
   name: 'KpiCard',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'value': S.string(),
-      'subtitle': S.string(),
-      'trend': S.string(),
-      'trendValue': S.string(),
-      'color': S.string(),
+      'title': CatalogSchemas.text,
+      'value': CatalogSchemas.text,
+      'subtitle': CatalogSchemas.text,
+      'trend': Schema.string(),
+      'trendValue': CatalogSchemas.text,
+      'color': Schema.string(),
     },
     required: ['title', 'value'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String? ?? '';
-    final value = data['value'] as String? ?? '';
-    final subtitle = data['subtitle'] as String?;
-    final trend = data['trend'] as String?;
-    final trendValue = data['trendValue'] as String?;
-    final colorStr = data['color'] as String?;
-    final color = (colorStr != null && colorStr.isNotEmpty)
-        ? parseHexColor(colorStr)
-        : null;
-
+  builder: (_, _, props, _) {
+    final colorStr = props.string('color');
     return KpiCardWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      value: value,
-      subtitle: subtitle,
-      trend: trend,
-      trendValue: trendValue,
-      accentColor: color,
+      title: props.string('title') ?? '',
+      value: props.string('value') ?? '',
+      subtitle: props.string('subtitle'),
+      trend: props.string('trend'),
+      trendValue: props.string('trendValue'),
+      accentColor: (colorStr != null && colorStr.isNotEmpty)
+          ? parseHexColor(colorStr)
+          : null,
     );
   },
 );

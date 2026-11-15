@@ -1,57 +1,54 @@
-import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:json_schema_builder/json_schema_builder.dart'
+    hide ValidationResult;
+
+import '../../utils/a2ui_helpers.dart';
+import '../../catalog_events.dart';
 import '../../widgets/form/action_form.dart';
 
-final actionFormItem = CatalogItem(
+/// On submit, writes `{key: value}` for every field to the path `values` is
+/// bound to, then sends `form_submit` with the same map as its context, or
+/// runs `action` when the agent declares one.
+final actionFormItem = ComponentImplementation(
   name: 'ActionForm',
-  dataSchema: S.object(
+  schema: Schema.object(
     properties: {
-      'title': S.string(),
-      'fields': S.list(
-        items: S.object(
+      'title': CatalogSchemas.text,
+      'fields': Schema.list(
+        items: Schema.object(
           properties: {
-            'key': S.string(),
-            'label': S.string(),
-            'type': S.string(),
-            'placeholder': S.string(),
-            'required': S.boolean(),
+            'key': Schema.string(),
+            'label': Schema.string(),
+            'type': Schema.string(),
+            'placeholder': Schema.string(),
+            'required': Schema.boolean(),
           },
           required: ['key', 'label'],
         ),
       ),
-      'submitLabel': S.string(),
-      'successMessage': S.string(),
-      'requiredErrorText': S.string(),
+      'submitLabel': CatalogSchemas.text,
+      'successMessage': CatalogSchemas.text,
+      'requiredErrorText': CatalogSchemas.text,
+      'values': CatalogSchemas.binding,
+      'action': CatalogSchemas.action,
     },
     required: ['fields'],
   ),
-  widgetBuilder: (itemContext) {
-    final data = itemContext.data as Map<String, dynamic>;
-    final title = data['title'] as String?;
-    final submitLabel = data['submitLabel'] as String? ?? 'Submit';
-    final successMessage = data['successMessage'] as String?;
-
-    final rawFields = data['fields'] as List<dynamic>? ?? [];
-    final fields = rawFields.whereType<Map<String, dynamic>>().toList();
-
-    return ActionFormWidget(
-      key: ValueKey(itemContext.id),
-      title: title,
-      fields: fields,
-      submitLabel: submitLabel,
-      successMessage: successMessage,
-      requiredErrorText:
-          data['requiredErrorText'] as String? ?? '{label} is required',
-      dispatchEvent: (eventName, values) {
-        itemContext.dispatchEvent(
-          UserActionEvent(
-            name: eventName,
-            sourceComponentId: itemContext.id,
-            context: values.map((k, v) => MapEntry(k, v as Object)),
-          ),
-        );
-      },
-    );
-  },
+  builder: (_, node, props, _) => ActionFormWidget(
+    title: props.string('title'),
+    fields: props.objects('fields'),
+    submitLabel: props.string('submitLabel') ?? 'Submit',
+    successMessage: props.string('successMessage'),
+    requiredErrorText:
+        props.string('requiredErrorText') ?? '{label} is required',
+    dispatchEvent: (_, values) {
+      props.writeBack('values', values);
+      dispatchCatalogEvent(
+        node,
+        props,
+        CatalogEvents.formSubmit,
+        context: values,
+      );
+    },
+  ),
 );

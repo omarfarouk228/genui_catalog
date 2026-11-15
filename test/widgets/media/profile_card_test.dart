@@ -76,12 +76,7 @@ void main() {
 
   group('profileCardItem', () {
     testWidgets('builds with minimal data', (tester) async {
-      final ctx = createItemContext(
-        buildContext: await getContext(tester),
-        data: {'name': 'Eve'},
-        type: 'ProfileCard',
-      );
-      await tester.pumpWidget(wrap(profileCardItem.widgetBuilder(ctx)));
+      await pumpItem(tester, profileCardItem, {'name': 'Eve'});
       expect(find.byType(ProfileCardWidget), findsOneWidget);
     });
   });

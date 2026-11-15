@@ -58,7 +58,7 @@ lib/
 │   ├── forms_screen.dart         # FormCatalog presets
 │   └── media_screen.dart         # MediaCatalog presets
 ├── services/
-│   ├── ai_service.dart           # Gemini API integration
+│   ├── ai_service.dart           # Gemini + a2ui_agent + MessageProcessor
 │   └── api_key_provider.dart     # In-memory key store
 ├── utils/
 │   └── constants.dart            # Shared URLs and string constants
@@ -73,7 +73,9 @@ lib/
 
 | Package | Purpose |
 |---|---|
-| `genui` | Core SDK — `SurfaceController`, `CatalogItem`, event dispatch |
+| `a2ui_core` | A2UI protocol — `MessageProcessor`, surfaces, data model, actions |
+| `a2ui_flutter` | Renders surfaces — `A2uiSurface`, basic catalog |
+| `a2ui_agent` | Builds the Gemini prompt from the catalogs and parses its streamed replies |
 | `genui_catalog` | The component catalog being demonstrated |
 | `google_generative_ai` | Gemini API client |
 | `url_launcher` | pub.dev and GitHub links |
